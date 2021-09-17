@@ -1,0 +1,1 @@
+#gcc -O3 -Wall -Werror YBCrypto.c hash_core.c main.c
