@@ -12,8 +12,6 @@
 #define SUCCESS 0x94000001
 #define FAIL_CORE 0x94000000
 
-
-
 //! block cipher ////////////////////////////////////////////////////////////////
 #define AES 0x94000001
 #define ARIA 0x94000002
@@ -70,8 +68,8 @@ typedef struct YBCrypto_Hash_manager_st{
     SHA256_SHORT keccak_state[KECCAK_STATE_SIZE];
 } HashManager;// provides SHA256, SHA3(keccack 1600), LEA
 
-#endif
-
-
 //! YBCrypto common API
 void YBCrypto_memset(void* p, int value, int size);
+
+#endif
+//EOF
