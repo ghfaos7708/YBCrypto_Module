@@ -15,30 +15,32 @@
 //! block cipher ////////////////////////////////////////////////////////////////
 #define AES 0x94000001
 #define ARIA 0x94000002
-#define LEA 0x94000003
-#define SEED 0x94000004
 #define ENCRYPT 0x94000001
 #define DECRYPT 0x94000000
+#define AES_MAXNR 14
 #define BC_MAX_BLOCK_SIZE 16 //AES, ARIA, LEA, SEED have 16 bytes inner state
+
+typedef struct aes_key_st {
+    unsigned int rd_key[4 * (AES_MAXNR + 1)];
+    int rounds;
+} AES_KEY;
 
 typedef struct YBCrypto_cipher_manager_st{
     uint32_t block_cipher; 
-    uint32_t key_size;
+    uint32_t key_bitsize;
 	uint32_t block_size;
-	uint32_t encrypt;
-	void   *key_st;
+	uint32_t direct;
 	
-	unsigned char iv[BC_MAX_BLOCK_SIZE];
-	unsigned char buf[BC_MAX_BLOCK_SIZE];
-	uint32_t buflen;
-	
-	unsigned char last_block[BC_MAX_BLOCK_SIZE];
+	uint8_t iv[BC_MAX_BLOCK_SIZE];
+	uint8_t buf[BC_MAX_BLOCK_SIZE];
+    uint64_t encrypted_len;
+
+    uint8_t remained[BC_MAX_BLOCK_SIZE];
+    int remained_len;
 	int last_block_flag;
 
-	uint32_t (*set_enc_key)(unsigned char *, int, void *);
-	uint32_t (*set_dec_key)(unsigned char *, int, void *);
-	void (*encrypt_block)(unsigned char*, unsigned char*, void *);
-	void (*decrypt_block)(unsigned char*, unsigned char*, void *);
+    AES_KEY aes_key;
+	
 } CipherManager; // provides AES, ARIA, LEA, SEED
 
 //! Hash Function ////////////////////////////////////////////////////////////////
@@ -65,7 +67,7 @@ typedef struct YBCrypto_Hash_manager_st{
     SHA3_256_LONG keccakCapacity;
     SHA3_256_LONG keccakSuffix;
     SHA3_256_LONG end_offset;
-    SHA256_SHORT keccak_state[KECCAK_STATE_SIZE];
+    SHA3_256_SHORT keccak_state[KECCAK_STATE_SIZE];
 } HashManager;// provides SHA256, SHA3(keccack 1600), LEA
 
 //! YBCrypto common API

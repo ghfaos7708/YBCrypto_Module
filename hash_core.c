@@ -247,15 +247,6 @@ typedef enum
     SHA3_SHAKE_USE = 1,
 } SHA3_USE_SHAKE;
 
-// static unsigned int keccakRate = 0;
-// static unsigned int keccakCapacity = 0;
-// static unsigned int keccakSuffix = 0;
-// static int end_offset;
-
-// static uint8_t keccak_state[KECCAK_STATE_SIZE] = {
-//     0x00,
-// };
-
 static const uint32_t keccakf_rndc[KECCAK_ROUND][2] =
     {
         {0x00000001, 0x00000000}, {0x00008082, 0x00000000}, {0x0000808a, 0x80000000}, {0x80008000, 0x80000000}, {0x0000808b, 0x00000000}, {0x80000001, 0x00000000}, {0x80008081, 0x80000000}, {0x00008009, 0x80000000}, {0x0000008a, 0x00000000}, {0x00000088, 0x00000000}, {0x80008009, 0x00000000}, {0x8000000a, 0x00000000},
