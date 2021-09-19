@@ -25,6 +25,11 @@ typedef struct aes_key_st {
     int rounds;
 } AES_KEY;
 
+typedef struct aria_key_st {
+    uint8_t aria_key[BC_MAX_BLOCK_SIZE*17];
+    int rounds;
+} ARIA_KEY;
+
 typedef struct YBCrypto_cipher_manager_st{
     uint32_t block_cipher; 
     uint32_t key_bitsize;
@@ -40,6 +45,7 @@ typedef struct YBCrypto_cipher_manager_st{
 	int pad_len;
 
     AES_KEY aes_key;
+    ARIA_KEY aria_key;
 	
 } CipherManager; // provides AES, ARIA, LEA, SEED
 

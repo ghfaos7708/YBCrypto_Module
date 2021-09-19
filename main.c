@@ -6,6 +6,7 @@
 //!TODO 지울것
 #include "hash.h"
 #include "mode.h"
+#include "blockcipher.h"
 
 typedef unsigned char u8;
 
@@ -26,9 +27,9 @@ int main()
 	// u8 rand2[256] = { 0 };
 	// u8 KAT[512] = { 0 };
 	u8 key[128] = {0};
-	u8 plaintext[128] = {0};
-	u8 plaintext2[128] = {0};
-	u8 ciphertext[128] = {0};
+	u8 plaintext[1000] = {0};
+	u8 plaintext2[1000] = {0};
+	u8 ciphertext[1000] = {0};
 	// u8 answer[128] = {0};
 	u8 msg[500] = {0x00,};
 	u8 digest[32] = {0};
@@ -59,14 +60,23 @@ int main()
 
 	//! AES Test
 	keyLen = asc2hex(key, "00000000000000000000000000000000");
-	ptLen = asc2hex(plaintext, "8000000000000000");
-	ptLen2 = asc2hex(plaintext2, "0000000000");
-
+	ptLen = asc2hex(plaintext, "80000000000000000000000000000000");
+	ptLen2 = asc2hex(plaintext2, "80000000000000000000000000000000");
 	ECB_Init(&CM, AES, ENCRYPT, key, keyLen*8);
 	ECB_Update(&CM, plaintext, ptLen, ciphertext, ctLen);
 	ECB_Update(&CM, plaintext2, ptLen2, ciphertext, ctLen);
 	ECB_Final(&CM, ciphertext, ctLen);
-	print_hex("AES_RET", ciphertext, 16);
+	//print_hex("AES_RET", ciphertext, CM.encrypted_len);
+
+	//! ARIA Test
+	keyLen = asc2hex(key, "3AAFC1EB3C0CC5CC106E45A1D689F1E5");
+	ptLen = asc2hex(plaintext, "74B690D38145006662157884B2631176E8E0859C3306365FA9AB7266A1D7F50D5DD3AF13ED82C8924FF4");
+	ptLen2 = asc2hex(plaintext2, "E235DB399EA5");
+	ECB_Init(&CM, ARIA, ENCRYPT, key, keyLen*8);
+	ECB_Update(&CM, plaintext, ptLen, ciphertext, ctLen);
+	ECB_Update(&CM, plaintext2, ptLen2, ciphertext, ctLen);
+	ECB_Final(&CM, ciphertext, ctLen);
+	//print_hex("ARIA_RET", ciphertext, CM.encrypted_len);
 
 	//! Hash Test
 	msglen = string2hex(msg, "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq");
