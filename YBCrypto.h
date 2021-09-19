@@ -35,9 +35,9 @@ typedef struct YBCrypto_cipher_manager_st{
 	uint8_t buf[BC_MAX_BLOCK_SIZE];
     uint64_t encrypted_len;
 
-    uint8_t remained[BC_MAX_BLOCK_SIZE];
+    uint8_t lastblock[BC_MAX_BLOCK_SIZE];
     int remained_len;
-	int last_block_flag;
+	int pad_len;
 
     AES_KEY aes_key;
 	

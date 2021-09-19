@@ -4,6 +4,7 @@
         "__string": "c",
         "string": "c",
         "string_view": "c",
-        "ybcrypto.h": "c"
+        "ybcrypto.h": "c",
+        "ios": "c"
     }
 }

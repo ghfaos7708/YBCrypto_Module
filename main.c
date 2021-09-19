@@ -5,6 +5,7 @@
 
 //!TODO 지울것
 #include "hash.h"
+#include "mode.h"
 
 typedef unsigned char u8;
 
@@ -24,12 +25,14 @@ int main()
 	// u8 rand1[256] = { 0 };
 	// u8 rand2[256] = { 0 };
 	// u8 KAT[512] = { 0 };
-	// u8 key[128] = {0};
-	// u8 plaintext[128] = {0};
-	// u8 ciphertext[128] = {0};
+	u8 key[128] = {0};
+	u8 plaintext[128] = {0};
+	u8 plaintext2[128] = {0};
+	u8 ciphertext[128] = {0};
 	// u8 answer[128] = {0};
 	u8 msg[500] = {0x00,};
 	u8 digest[32] = {0};
+	CipherManager CM = {0x00,};
 
 	// int entropyInputLen = 0;
 	// int entropyReseedLen = 0;
@@ -38,12 +41,13 @@ int main()
 	// int addInput2Len = 0;
 	// int pStringLen = 0;
 	// int nonce1Len = 0;
-	// int KATLen = 0;
+	//int KATLen = 0;
 	// int ret = 0;
-	// int keyLen;
-	// int ptLen;
-	// int ctLen;
-	int msglen;
+	int keyLen = 0;
+	int ptLen = 0;
+	int ptLen2 = 0;
+	int ctLen = 0;
+	int msglen = 0;
 	// int digestlen;
 
 
@@ -53,14 +57,25 @@ int main()
 	// GTCrypto_ARIA_Crypt(ARIA_ENCRYPT, ARIA_ECB_MODE, NULL, plaintext, ptLen, key, keyLen * 8, ciphertext);
 	// print_hex("ARIA_RET", ciphertext, ptLen);
 
+	//! AES Test
+	keyLen = asc2hex(key, "00000000000000000000000000000000");
+	ptLen = asc2hex(plaintext, "8000000000000000");
+	ptLen2 = asc2hex(plaintext2, "0000000000");
+
+	ECB_Init(&CM, AES, ENCRYPT, key, keyLen*8);
+	ECB_Update(&CM, plaintext, ptLen, ciphertext, ctLen);
+	ECB_Update(&CM, plaintext2, ptLen2, ciphertext, ctLen);
+	ECB_Final(&CM, ciphertext, ctLen);
+	print_hex("AES_RET", ciphertext, 16);
+
 	//! Hash Test
 	msglen = string2hex(msg, "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq");
 	SHA256_MD(msg,msglen,digest);
-	print_hex("SHA256_RET", digest, 256/8);
+	//print_hex("SHA256_RET", digest, 256/8);
 
     msglen = string2hex(msg, "asdjkfqkjwefnkjcnjkqwbjkecbjkqwejkfhqwkefh");
 	SHA3_MD(msg,msglen,digest);
-    print_hex("SHA-3_256_RET", digest, 256/8);
+    //print_hex("SHA-3_256_RET", digest, 256/8);
 
 
 

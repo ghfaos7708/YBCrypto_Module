@@ -53,7 +53,7 @@ int ECB_Update(CipherManager *c, uint8_t *in, uint64_t in_byteLen, uint8_t *out,
         while ((Update_bytelen + c->remained_len) >= AES_BLOCK_SIZE)
         {
             memcpy(c->buf + c->remained_len, Update_in, AES_BLOCK_SIZE - c->remained_len);
-            if(c->direct == ENCRYPT)
+            if (c->direct == ENCRYPT)
             {
                 AES_encrypt(c->buf, out + (count_loop * AES_BLOCK_SIZE), &(c->aes_key));
             }
@@ -63,12 +63,13 @@ int ECB_Update(CipherManager *c, uint8_t *in, uint64_t in_byteLen, uint8_t *out,
             }
             Update_in += (AES_BLOCK_SIZE - c->remained_len);
             Update_bytelen -= (AES_BLOCK_SIZE - c->remained_len);
-            out_byteLen += AES_BLOCK_SIZE;
             c->remained_len = 0;
             count_loop++;
         }
         memcpy(c->buf + c->remained_len, Update_in, Update_bytelen);
         c->remained_len = Update_bytelen;
+        c->encrypted_len += AES_BLOCK_SIZE * count_loop;
+        out_byteLen = AES_BLOCK_SIZE * count_loop;
 
         break;
 
@@ -87,5 +88,41 @@ int ECB_Update(CipherManager *c, uint8_t *in, uint64_t in_byteLen, uint8_t *out,
     if (Update_in != NULL)
         Update_in = NULL;
     Update_bytelen = 0;
+    return ret;
+}
+
+int ECB_Final(CipherManager *c, uint8_t *out, uint64_t out_byteLen)
+{
+    int ret = SUCCESS;
+
+    switch (c->block_cipher)
+    {
+    case AES:
+        //* zero padding
+        if (c->remained_len != 0)
+        {
+            c->pad_len = AES_BLOCK_SIZE - c->remained_len;
+            memcpy(c->lastblock, c->buf, c->remained_len);
+            if (c->direct == ENCRYPT)
+            {
+                AES_encrypt(c->buf, out, &(c->aes_key));
+            }
+            else
+            {
+                AES_decrypt(c->buf, out, &(c->aes_key));
+            }
+            c->encrypted_len += c->remained_len;
+            out_byteLen = c->encrypted_len;
+        }
+        break;
+
+    case ARIA:
+        /* code */
+        break;
+
+    default:
+        return FAIL_CORE;
+        break;
+    }
     return ret;
 }
