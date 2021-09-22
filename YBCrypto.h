@@ -82,13 +82,15 @@ typedef struct YBCrypto_Hash_manager_st{
 
 
 //! Hash Function ////////////////////////////////////////////////////////////////
-#define MAX_HMAC_KEYSIZE 64
+#define HMAC_SHA256_KEYSIZE 64
+#define HMAC_SHA3_KEYSIZE 136
 typedef struct YBCrypto_Hmac_manager_st{
    HashManager hash_manger;
    int32_t hash_function;
    int32_t keyset;
-   uint8_t key[MAX_HMAC_KEYSIZE];
+   uint8_t key[HMAC_SHA3_KEYSIZE];
    uint8_t keyLen;
+   uint8_t fix_keysize;
 } HMACManager;
 
 
