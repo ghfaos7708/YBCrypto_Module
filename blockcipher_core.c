@@ -1289,10 +1289,60 @@ int ARIA_EncKeySetup(const uint8_t* userKey, int bits, ARIA_KEY *key)
 int ARIA_DecKeySetup(const uint8_t* userKey, int bits, ARIA_KEY *key)
 {
     int ret = SUCCESS;
-	int  i, j, R;
-	uint8_t t[16];
 
-	R = ARIA_EncKeySetup(userKey, bits, key);
+    int  i = 0, j = 0, R = (bits + 256) / 32, q = 0;
+	uint8_t t[16], w1[16], w2[16], w3[16];
+
+	// Initialization part
+	q = (bits - 128) / 64;
+	for (i = 0; i < 16; i++) t[i] = S[i % 4][KRK[q][i] ^ userKey[i]];
+	ARIA_DL(t, w1);
+	if (R == 14)
+		for (i = 0; i < 8; i++) w1[i] ^= userKey[16 + i];
+	else if (R == 16)
+		for (i = 0; i < 16; i++) w1[i] ^= userKey[16 + i];
+
+	q = (q == 2) ? 0 : (q + 1);
+	for (i = 0; i < 16; i++) t[i] = S[(2 + i) % 4][KRK[q][i] ^ w1[i]];
+	ARIA_DL(t, w2);
+	for (i = 0; i < 16; i++) w2[i] ^= userKey[i];
+
+	q = (q == 2) ? 0 : (q + 1);
+	for (i = 0; i < 16; i++) t[i] = S[i % 4][KRK[q][i] ^ w2[i]];
+	ARIA_DL(t, w3);
+	for (i = 0; i < 16; i++) w3[i] ^= w1[i];
+
+	for (i = 0; i < 16 * (R + 1); i++) key->aria_key[i] = 0;
+
+	// Rotation part
+	ARIA_RotXOR(userKey, 0, key->aria_key); ARIA_RotXOR(w1, 19, key->aria_key);
+	ARIA_RotXOR(w1, 0, key->aria_key + 16); ARIA_RotXOR(w2, 19, key->aria_key + 16);
+	ARIA_RotXOR(w2, 0, key->aria_key + 32); ARIA_RotXOR(w3, 19, key->aria_key + 32);
+	ARIA_RotXOR(w3, 0, key->aria_key + 48); ARIA_RotXOR(userKey, 19, key->aria_key + 48);
+
+	ARIA_RotXOR(userKey, 0, key->aria_key + 64); ARIA_RotXOR(w1, 31, key->aria_key + 64);
+	ARIA_RotXOR(w1, 0, key->aria_key + 80); ARIA_RotXOR(w2, 31, key->aria_key + 80);
+	ARIA_RotXOR(w2, 0, key->aria_key + 96); ARIA_RotXOR(w3, 31, key->aria_key + 96);
+	ARIA_RotXOR(w3, 0, key->aria_key + 112); ARIA_RotXOR(userKey, 31, key->aria_key + 112);
+
+	ARIA_RotXOR(userKey, 0, key->aria_key + 128); ARIA_RotXOR(w1, 67, key->aria_key + 128);
+	ARIA_RotXOR(w1, 0, key->aria_key + 144); ARIA_RotXOR(w2, 67, key->aria_key + 144);
+	ARIA_RotXOR(w2, 0, key->aria_key + 160); ARIA_RotXOR(w3, 67, key->aria_key + 160);
+	ARIA_RotXOR(w3, 0, key->aria_key + 176); ARIA_RotXOR(userKey, 67, key->aria_key + 176);
+
+	ARIA_RotXOR(userKey, 0, key->aria_key + 192); ARIA_RotXOR(w1, 97, key->aria_key + 192);
+
+	// for 192-bit key
+	if (R > 12) {
+		ARIA_RotXOR(w1, 0, key->aria_key + 208); ARIA_RotXOR(w2, 97, key->aria_key + 208);
+		ARIA_RotXOR(w2, 0, key->aria_key + 224); ARIA_RotXOR(w3, 97, key->aria_key + 224);
+	}
+
+	// for 256-bit key
+	if (R > 14) {
+		ARIA_RotXOR(w3, 0, key->aria_key + 240); ARIA_RotXOR(userKey, 97, key->aria_key + 240);
+		ARIA_RotXOR(userKey, 0, key->aria_key + 256); ARIA_RotXOR(w1, 109, key->aria_key + 256);
+	}
 
 	// reversing the order
 	for (j = 0; j < 16; j++) {

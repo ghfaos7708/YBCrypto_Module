@@ -7,6 +7,9 @@
 #include <string.h>
 #include <memory.h>
 
+//! utill
+#define TRUE 0x94FFFFFF
+#define FALSE 0x94FF0001
 
 //! YBCrypto
 #define SUCCESS 0x94000001
@@ -21,7 +24,7 @@
 #define BC_MAX_BLOCK_SIZE 16 //AES, ARIA, LEA, SEED have 16 bytes inner state
 
 typedef struct aes_key_st {
-    unsigned int rd_key[4 * (AES_MAXNR + 1)];
+    uint32_t rd_key[4 * (AES_MAXNR + 1)];
     int rounds;
 } AES_KEY;
 
@@ -31,21 +34,22 @@ typedef struct aria_key_st {
 } ARIA_KEY;
 
 typedef struct YBCrypto_cipher_manager_st{
+    uint64_t encrypted_len;
     uint32_t block_cipher; 
     uint32_t key_bitsize;
 	uint32_t block_size;
+
+    uint32_t last_block_flag;
+    uint32_t remained_len;
+	uint32_t pad_len;
 	uint32_t direct;
 	
 	uint8_t iv[BC_MAX_BLOCK_SIZE];
 	uint8_t buf[BC_MAX_BLOCK_SIZE];
-    uint64_t encrypted_len;
-
     uint8_t lastblock[BC_MAX_BLOCK_SIZE];
-    int remained_len;
-	int pad_len;
 
-    AES_KEY aes_key;
     ARIA_KEY aria_key;
+    AES_KEY aes_key;
 	
 } CipherManager; // provides AES, ARIA, LEA, SEED
 
@@ -75,6 +79,18 @@ typedef struct YBCrypto_Hash_manager_st{
     SHA3_256_LONG end_offset;
     SHA3_256_SHORT keccak_state[KECCAK_STATE_SIZE];
 } HashManager;// provides SHA256, SHA3(keccack 1600), LEA
+
+
+//! Hash Function ////////////////////////////////////////////////////////////////
+#define MAX_HMAC_KEYSIZE 64
+typedef struct YBCrypto_Hmac_manager_st{
+   HashManager hash_manger;
+   int32_t hash_function;
+   int32_t keyset;
+   uint8_t key[MAX_HMAC_KEYSIZE];
+   uint8_t keyLen;
+} HMACManager;
+
 
 //! YBCrypto common API
 void YBCrypto_memset(void* p, int value, int size);
