@@ -436,3 +436,4 @@ int CTR_Final(CipherManager *c, uint8_t *out, uint32_t *pad_bytelen)
     CiperManager_Clean(c);
     return ret;
 }
+//EOF

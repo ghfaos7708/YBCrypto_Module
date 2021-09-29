@@ -6,31 +6,69 @@
 #include <stdint.h>
 #include <string.h>
 #include <memory.h>
+#include <malloc/malloc.h>
 
 //! utill
-#define TRUE 0x94FFFFFF
-#define FALSE 0x94FF0001
+#define PRINT_MODE
 
-//! YBCrypto
-#define SUCCESS 0x94000001
-#define FAIL_CORE 0x94000000
+//! YBCrypto ////////////////////////////////////////////////////////////////////
+#define YBCrtypto_RESULT_BASE 0x94100000
+#define YBCrtypto_MODULE_BASE 0x94200000
+
+enum YBCrtypto_FUNCTION_RESULT
+{
+	SUCCESS = YBCrtypto_RESULT_BASE, //0x94100000
+    FAIL_CORE,
+	FAIL_INVALID_INPUT_DATA,
+	FAIL_INVALID_MODULE_STATE,
+	FAIL_KATSELF_TEST,
+	FAIL_INTEGIRTY_TEST,
+	FAIL_COND_TEST,
+	FAIL_NOT_PERFORM_KATSELFTEST,
+	FAIL_DRBG_INNER_FUNCTION,
+	FAIL_DRBG_ENTROPY_LEN_SMALL,
+	FAIL_DRBG_NONCE_LEN_SMALL,
+	FAIL_DRBG_ENTROPY_TEST,
+	FAIL_DRBG_NOT_INITIALIZE,
+};
+
+enum YBCrtypto_MODULE_STATE
+{
+	YBCrtypto_CM_LOAD = YBCrtypto_MODULE_BASE, //0x94200000
+	YBCrtypto_CM_NOMAL_VM, //verification mode
+    YBCrtypto_CM_NOMAL_NVM, //non_verification mode
+	YBCrtypto_CM_PRE_SELFTEST,
+	YBCrtypto_CM_COND_SELFTEST,
+	YBCrtypto_CM_NORMAL_ERROR,
+	YBCrtypto_CM_CRITICAL_ERROR,
+	YBCrtypto_CM_EXIT
+};
+
+typedef struct YBCrtypto_ALG_TESTED_ {
+	int32_t isBlockCipherTested;
+	int32_t isHashTested;
+	int32_t isHMACTested;
+	int32_t isDRBGTested;
+}IS_ALG_TESTED;
+
+IS_ALG_TESTED algTestedFlag;
 
 //! block cipher ////////////////////////////////////////////////////////////////
-#define AES 0x94000001
-#define ARIA 0x94000002
-#define ENCRYPT 0x94000001
-#define DECRYPT 0x94000000
+#define AES 0x94300001
+#define ARIA 0x94300002
+#define ENCRYPT 0x94300010
+#define DECRYPT 0x94300011
 #define AES_MAXNR 14
-#define BC_MAX_BLOCK_SIZE 16 //AES, ARIA, LEA, SEED have 16 bytes inner state
+#define BC_MAX_BLOCK_SIZE 16 //AES, ARIA, SEED have 16 bytes inner state
 
 typedef struct aes_key_st {
     uint32_t rd_key[4 * (AES_MAXNR + 1)];
-    int rounds;
+    int32_t rounds;
 } AES_KEY;
 
 typedef struct aria_key_st {
     uint8_t aria_key[BC_MAX_BLOCK_SIZE*17];
-    int rounds;
+    int32_t rounds;
 } ARIA_KEY;
 
 typedef struct YBCrypto_cipher_manager_st{
@@ -54,9 +92,9 @@ typedef struct YBCrypto_cipher_manager_st{
 } CipherManager; // provides AES, ARIA, LEA, SEED
 
 //! Hash Function ////////////////////////////////////////////////////////////////
-#define SHA256 0x94000001
-#define SHA3 0x94000002
-#define LSH 0x94000003
+#define SHA256 0x94400001
+#define SHA3 0x94400002
+#define LSH 0x94400003
 
 #define SHA256_SHORT uint8_t
 #define SHA256_LONG uint64_t
@@ -94,8 +132,11 @@ typedef struct YBCrypto_Hmac_manager_st{
 } HMACManager;
 
 
-//! YBCrypto common API
-void YBCrypto_memset(void* p, int value, int size);
+//! YBCrypto common API /////////////////////////////////////////////////////////////
+void YBCrypto_memset(void* pointer, int32_t value, int32_t size);
+void YBCrypto_ModuleInfo();
+int32_t YBCrypto_GetState();
 
+//! YBCrypto BlockCipher API ////////////////////////////////////////////////////////
 #endif
 //EOF

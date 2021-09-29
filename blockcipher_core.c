@@ -1393,3 +1393,4 @@ void ARIA_Crypt(const uint8_t* in, int rounds, const ARIA_KEY* key, uint8_t* out
     } 
    //aria_rk = NULL;
 }
+//EOF

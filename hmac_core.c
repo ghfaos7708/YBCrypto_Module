@@ -144,3 +144,4 @@ int HMAC_final(HMACManager *c, uint8_t *mac)
 
     return ret;
 }
+//EOF
