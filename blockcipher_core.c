@@ -678,9 +678,9 @@ int AES_set_encrypt_key(const uint8_t *userKey, int bits, AES_KEY *key)
 int AES_set_decrypt_key(const uint8_t *userKey, int bits, AES_KEY *key)
 {
 
-    uint32_t *rk;
-    int i, j, status;
-    uint32_t temp;
+    uint32_t *rk = NULL;
+    int i = 0, j = 0, status = 0;
+    uint32_t temp = 0x00;
 
     /* first, start with an encryption schedule */
     status = AES_set_encrypt_key(userKey, bits, key);

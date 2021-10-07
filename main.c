@@ -104,13 +104,16 @@ int main()
 	//! ARIA  CTR Test
 	keyLen = asc2hex(key, "26F88C260A37518FE79C74777A3EBB5D");
 	ivlen = asc2hex(iv, "D733F3A95BB486EAE37D50623B73AFC4");
-	ptLen = asc2hex(plaintext, "DA89D93CCCE473B0EF3E5F466288D5263BD3B58178701BD2395634632CC5511348293A58BE41C580");
-	ptLen2 = asc2hex(plaintext2, "2C80A73C14B4895E");
+	// ptLen = asc2hex(plaintext, "DA89D93CCCE473B0EF3E5F466288D5263BD3B58178701BD2395634632CC5511348293A58BE41C580");
+	// ptLen2 = asc2hex(plaintext2, "2C80A73C14B4895E");
+	ptLen = asc2hex(plaintext, "DA89D93CCCE473B0EF3E5F466288D5263BD3B58178701BD2395634632CC5511348293A58BE41C5802C80A73C14B4895E");
+	// 28D8A7F8749800FCD648ADBDBE3F0E7B3D46FDDE3E4F1243AC85DAFF7024449D1EF89F30BACAE097036DE11DC7217937
 	CTR_Init(&CM, ARIA, ENCRYPT, key, keyLen*8, iv);
 	CTR_Update(&CM, plaintext, ptLen, ciphertext, &ctLen1);
 	CTR_Update(&CM, plaintext2, ptLen2, ciphertext, &ctLen2);
 	CTR_Final(&CM, ciphertext, &padlen);
-	// print_hex("ARIA_CTR_RET", ciphertext, ctLen1 + ctLen2 + padlen);
+	//YBCrypto_BlockCipher(ARIA,CTR_MODE,ENCRYPT,key,keyLen*8,plaintext,ptLen2,iv,ciphertext);
+	print_hex("ARIA_CTR_RET", ciphertext, ptLen);
 
 	CTR_Init(&CM, ARIA, DECRYPT, key, keyLen*8, iv);
 	CTR_Update(&CM, ciphertext, ctLen1 + ctLen2 + padlen, plaintext, &ctLen1);

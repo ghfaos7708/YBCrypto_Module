@@ -2,124 +2,124 @@
 
 int32_t YBCRYPTO_STATE = YBCrtypto_CM_LOAD;
 
-static void unner_API_ALG_Init()
-{
-	algTestedFlag.isBlockCipherTested = FAIL_KATSELF_TEST;
-	algTestedFlag.isHashTested = FAIL_KATSELF_TEST;
-	algTestedFlag.isHMACTested = FAIL_KATSELF_TEST;
-	algTestedFlag.isDRBGTested = FAIL_KATSELF_TEST;
-}
+// static void unner_API_ALG_Init()
+// {
+// 	algTestedFlag.isBlockCipherTested = FAIL_KATSELF_TEST;
+// 	algTestedFlag.isHashTested = FAIL_KATSELF_TEST;
+// 	algTestedFlag.isHMACTested = FAIL_KATSELF_TEST;
+// 	algTestedFlag.isDRBGTested = FAIL_KATSELF_TEST;
+// }
 
 static int32_t Inner_API_GetState()
 {
 	return YBCRYPTO_STATE;
 }
 
-static int32_t Inner_API_AlgSelfTest()
-{
-	int32_t ret = SUCCESS;
+// static int32_t Inner_API_AlgSelfTest()
+// {
+// 	int32_t ret = SUCCESS;
 
-	//! BlockCipher KAT Test
-	if (algTestedFlag.isBlockCipherTested != SUCCESS)
-	{
-		// ret = _ARIA_KAT_SelfTest();
-		if (ret != SUCCESS)
-		{
-			algTestedFlag.isBlockCipherTested = FAIL_KATSELF_TEST;
-#ifdef PRINT_MODE
-			fprintf(stdout,"[Inner_API_AlgSelfTest] BlockCipher Error\n");
-#endif
-			goto EXIT;
-		}
-		else
-		{
-			algTestedFlag.isBlockCipherTested = SUCCESS;
-		}
-	}
+// 	//! BlockCipher KAT Test
+// 	if (algTestedFlag.isBlockCipherTested != SUCCESS)
+// 	{
+// 		// ret = _ARIA_KAT_SelfTest();
+// 		if (ret != SUCCESS)
+// 		{
+// 			algTestedFlag.isBlockCipherTested = FAIL_KATSELF_TEST;
+// #ifdef PRINT_MODE
+// 			fprintf(stdout,"[Inner_API_AlgSelfTest] BlockCipher Error\n");
+// #endif
+// 			goto EXIT;
+// 		}
+// 		else
+// 		{
+// 			algTestedFlag.isBlockCipherTested = SUCCESS;
+// 		}
+// 	}
 
-	//! Hash KAT Test
-	if (algTestedFlag.isHashTested != SUCCESS)
-	{
-		// ret = _Hash_KAT_SelfTest();
-		if (ret != SUCCESS)
-		{
-			algTestedFlag.isHashTested = FAIL_KATSELF_TEST;
-#ifdef PRINT_MODE
-			fprintf(stdout,"[Inner_API_AlgSelfTest] Hash Error\n");
-#endif
-			goto EXIT;
-		}
-		else
-		{
-			algTestedFlag.isHashTested = SUCCESS;
-		}
-	}
+// 	//! Hash KAT Test
+// 	if (algTestedFlag.isHashTested != SUCCESS)
+// 	{
+// 		// ret = _Hash_KAT_SelfTest();
+// 		if (ret != SUCCESS)
+// 		{
+// 			algTestedFlag.isHashTested = FAIL_KATSELF_TEST;
+// #ifdef PRINT_MODE
+// 			fprintf(stdout,"[Inner_API_AlgSelfTest] Hash Error\n");
+// #endif
+// 			goto EXIT;
+// 		}
+// 		else
+// 		{
+// 			algTestedFlag.isHashTested = SUCCESS;
+// 		}
+// 	}
 
-	//! Hmac KAT Test
-	if (algTestedFlag.isHMACTested != SUCCESS)
-	{
-		// ret = _Hmac_KAT_SelfTest();
-		if (ret != SUCCESS)
-		{
-			algTestedFlag.isHMACTested = FAIL_KATSELF_TEST;
-#ifdef PRINT_MODE
-			fprintf(stdout,"[Inner_API_AlgSelfTest] Hmac Error\n");
-#endif
-			goto EXIT;
-		}
-		else
-		{
-			algTestedFlag.isHMACTested = SUCCESS;
-		}
-	}
+// 	//! Hmac KAT Test
+// 	if (algTestedFlag.isHMACTested != SUCCESS)
+// 	{
+// 		// ret = _Hmac_KAT_SelfTest();
+// 		if (ret != SUCCESS)
+// 		{
+// 			algTestedFlag.isHMACTested = FAIL_KATSELF_TEST;
+// #ifdef PRINT_MODE
+// 			fprintf(stdout,"[Inner_API_AlgSelfTest] Hmac Error\n");
+// #endif
+// 			goto EXIT;
+// 		}
+// 		else
+// 		{
+// 			algTestedFlag.isHMACTested = SUCCESS;
+// 		}
+// 	}
 
-	//! DRBG KAT Test
-	if (algTestedFlag.isDRBGTested != SUCCESS)
-	{
-		// ret = _Hmac_KAT_SelfTest();
-		if (ret != SUCCESS)
-		{
-			algTestedFlag.isDRBGTested = FAIL_KATSELF_TEST;
-#ifdef PRINT_MODE
-			fprintf(stdout,"[Inner_API_AlgSelfTest] CTR_DRBG Error\n");
-#endif
-			goto EXIT;
-		}
-		else
-		{
-			algTestedFlag.isDRBGTested = SUCCESS;
-		}
-	}
+// 	//! DRBG KAT Test
+// 	if (algTestedFlag.isDRBGTested != SUCCESS)
+// 	{
+// 		// ret = _Hmac_KAT_SelfTest();
+// 		if (ret != SUCCESS)
+// 		{
+// 			algTestedFlag.isDRBGTested = FAIL_KATSELF_TEST;
+// #ifdef PRINT_MODE
+// 			fprintf(stdout,"[Inner_API_AlgSelfTest] CTR_DRBG Error\n");
+// #endif
+// 			goto EXIT;
+// 		}
+// 		else
+// 		{
+// 			algTestedFlag.isDRBGTested = SUCCESS;
+// 		}
+// 	}
 
-EXIT:
+// EXIT:
 
-	return ret;
-}
+// 	return ret;
+// }
 
-static int32_t Inner_API_integrityTest()
-{
-	int32_t ret = SUCCESS;
+// static int32_t Inner_API_integrityTest()
+// {
+// 	int32_t ret = SUCCESS;
 
-	//! SHA-256 KAT Test
-	// ret = _SHA256_KAT_SelfTest();
-	if (ret != SUCCESS) 
-	{
-		goto EXIT;
-	}
-	//! HMAC KAT Test
-	// ret = _HMAC_SHA256_KAT_SelfTest();
-	if (ret != SUCCESS) 
-	{
-		goto EXIT;
-	}
+// 	//! SHA-256 KAT Test
+// 	// ret = _SHA256_KAT_SelfTest();
+// 	if (ret != SUCCESS) 
+// 	{
+// 		goto EXIT;
+// 	}
+// 	//! HMAC KAT Test
+// 	// ret = _HMAC_SHA256_KAT_SelfTest();
+// 	if (ret != SUCCESS) 
+// 	{
+// 		goto EXIT;
+// 	}
 
-	//! Integrity Test
-	//ret = integrityTest();
+// 	//! Integrity Test
+// 	//ret = integrityTest();
 
-EXIT:
+// EXIT:
 
-	return ret;
-}
+// 	return ret;
+// }
 
 void YBCrypto_ChangeState(int32_t newState)
 {

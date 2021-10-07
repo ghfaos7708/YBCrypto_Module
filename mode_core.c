@@ -30,7 +30,7 @@ static void count_increase(uint8_t *ctr)
     }
 }
 
-int ECB_Init(CipherManager *c, int32_t ALG, int32_t direct, const uint8_t *userkey, uint64_t key_bitlen)
+int ECB_Init(CipherManager *c, int32_t ALG, int32_t direct, const uint8_t *userkey, uint32_t key_bitlen)
 {
     // 1. set informations in CipherManager
     // 2. key scheduling

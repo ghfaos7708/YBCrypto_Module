@@ -1,1 +1,4 @@
-#gcc -O3 -Wall -Werror YBCrypto.c hash_core.c main.c blockcipher_core.c mode_core.c
+#gcc -O3  -Wall YBCrypto.c hash_core.c main.c blockcipher_core.c mode_core.c hmac_core.c mode.c ctrdrbg_core.c
+
+#cppcheck --enable=all --force YBCrypto.c hash_core.c main.c blockcipher_core.c mode_core.c hmac_core.c mode.c ctrdrbg_core.c 
+#cppcheck --enable=all --force --check-config YBCrypto.c hash_core.c main.c blockcipher_core.c mode_core.c hmac_core.c mode.c ctrdrbg_core.c 
