@@ -228,10 +228,10 @@ EXIT:
 }
 
 int32_t CTR_DRBG_Instantiate(DRBGManager *DM,
-                             int32_t algo, uint32_t key_bitlen,
+                             uint32_t algo, uint32_t key_bitlen,
                              uint8_t *entropy_input, uint32_t entropy_bytelen,
                              uint8_t *nonce, uint32_t nonce_bytelen,
-                             uint32_t *personalization_string, uint32_t string_bytelen,
+                             uint8_t *personalization_string, uint32_t string_bytelen,
                              uint32_t derivation_function_flag)
 {
     uint8_t seed_material[MAX_SEEDLEN];
@@ -277,8 +277,9 @@ int32_t CTR_DRBG_Instantiate(DRBGManager *DM,
     }
 
     DM->algo = algo;
-    DM->Key_bytelen = key_bitlen / 8;;
-    DM->seedlen = BC_MAX_BLOCK_SIZE + DM->Key_bytelen ;
+    DM->Key_bytelen = key_bitlen / 8;
+    ;
+    DM->seedlen = BC_MAX_BLOCK_SIZE + DM->Key_bytelen;
     DM->Vlen = BC_MAX_BLOCK_SIZE;
 
     if (DM->derivation_function_flag == USE_DF)
@@ -305,7 +306,7 @@ int32_t CTR_DRBG_Instantiate(DRBGManager *DM,
             memcpy(ptr, personalization_string, string_bytelen);
         }
 
-        if (Blockcipher_df(algo, key_bitlen ,seed_material_in, seed_material_len, seed_material, DM->seedlen) != SUCCESS)
+        if (Blockcipher_df(algo, key_bitlen, seed_material_in, seed_material_len, seed_material, DM->seedlen) != SUCCESS)
         {
             YBCrypto_memset(seed_material, 0x00, DM->seedlen);
             ret = FAIL_DRBG_INNER_FUNCTION;
@@ -317,7 +318,8 @@ int32_t CTR_DRBG_Instantiate(DRBGManager *DM,
     {
         loop = string_bytelen <= entropy_bytelen ? string_bytelen : entropy_bytelen;
 
-        if (loop > MAX_SEEDLEN) loop = MAX_SEEDLEN;
+        if (loop > MAX_SEEDLEN)
+            loop = MAX_SEEDLEN;
         YBCrypto_memset(seed_material, 0x00, MAX_SEEDLEN);
         if (personalization_string == NULL || string_bytelen == 0)
             for (cnt_i = 0; cnt_i < entropy_bytelen; cnt_i++)
@@ -338,7 +340,7 @@ int32_t CTR_DRBG_Instantiate(DRBGManager *DM,
     }
 
     DM->reseed_counter = 1;
-    DM->initialized_flag = STATE_INITIALIZED_FLAG;
+    DM->initialized_flag = DM_INITIALIZED_FLAG;
 
 EXIT:
     if (ret != SUCCESS)
@@ -354,3 +356,201 @@ EXIT:
     return ret;
 }
 
+int32_t CTR_DRBG_Reseed(DRBGManager *DM,
+                        uint8_t *entropy_input, uint32_t entropy_bytelen,
+                        uint8_t *additional_input, uint32_t add_bytelen)
+{
+    uint8_t seed_material[MAX_SEEDLEN];
+    uint8_t *seed_material_in = NULL;
+    uint8_t *ptr = NULL;
+    uint64_t ret = SUCCESS;
+    uint32_t seed_material_len = 0x00;
+    uint32_t loop = 0x00;
+    uint32_t cnt_i = 0;
+
+    if (add_bytelen > DM->seedlen)
+    {
+        add_bytelen = DM->seedlen;
+    }
+
+    if (entropy_bytelen < DM->Key_bytelen)
+    {
+        ret = FAIL_DRBG_ENTROPY_LEN_SMALL;
+        goto EXIT;
+    }
+
+    if (DM->derivation_function_flag == USE_DF)
+    {
+        YBCrypto_memset(seed_material, 0x00, MAX_SEEDLEN);
+        seed_material_len = entropy_bytelen;
+        if (add_bytelen > 0)
+            seed_material_len += (add_bytelen);
+        ptr = seed_material_in = (uint8_t *)malloc(seed_material_len);
+
+        memcpy(ptr, entropy_input, entropy_bytelen);
+        if (add_bytelen > 0)
+        {
+            ptr += entropy_bytelen;
+            memcpy(ptr, additional_input, add_bytelen);
+        }
+
+        if (Blockcipher_df(DM->algo, DM->Key_bytelen * 8, seed_material_in, seed_material_len, seed_material, DM->seedlen) != SUCCESS)
+        {
+            ret = FAIL_DRBG_INNER_FUNCTION;
+            goto EXIT;
+        }
+    }
+    else
+    {
+        loop = add_bytelen <= entropy_bytelen ? add_bytelen : entropy_bytelen;
+
+        YBCrypto_memset(seed_material, 0x00, MAX_SEEDLEN);
+
+        if (additional_input == NULL || add_bytelen == 0)
+        {
+            for (cnt_i = 0; cnt_i < entropy_bytelen; cnt_i++)
+            {
+                seed_material[cnt_i] = entropy_input[cnt_i];
+            }
+        }
+        else
+        {
+            for (cnt_i = 0; cnt_i < loop; cnt_i++)
+            {
+                seed_material[cnt_i] = entropy_input[cnt_i] ^ additional_input[cnt_i];
+            }
+        }
+    }
+
+    if (CTR_DRBG_Update(seed_material, DM) != SUCCESS)
+    {
+        ret = FAIL_INVALID_INPUT_DATA;
+        goto EXIT;
+    }
+
+    DM->reseed_counter = 1;
+
+EXIT:
+    if (ret != SUCCESS)
+    {
+        YBCrypto_memset(DM, 0x00, sizeof(DM));
+    }
+    if (seed_material_in)
+        free(seed_material_in);
+    YBCrypto_memset(seed_material_in, 0x00, seed_material_len);
+    YBCrypto_memset(seed_material, 0x00, MAX_SEEDLEN);
+
+    return ret;
+}
+
+int32_t CTR_DRBG_Generate(DRBGManager *DM,
+                          uint8_t *output, uint64_t requested_num_of_bits,
+                          uint8_t *entropy_input, uint32_t entropy_bytelen,
+                          uint8_t *addtional_input, uint32_t add_bytelen,
+                          uint32_t prediction_resistance_flag)
+{
+    uint8_t addtional_input_for_seed[MAX_SEEDLEN];
+    int32_t request_num_of_bytes;
+
+    uint32_t ret = SUCCESS;
+    uint8_t *temp = NULL;
+    uint8_t *ptr = NULL;
+    uint32_t templen = 0x00;
+
+    if (add_bytelen > DM->seedlen)
+    {
+        add_bytelen = DM->seedlen;
+    }
+
+    request_num_of_bytes = requested_num_of_bits / 8 + ((requested_num_of_bits % 8) != 0 ? 1 : 0);
+
+    DM->prediction_resistance_flag = prediction_resistance_flag;
+
+    if ((DM->prediction_resistance_flag == NO_PR) || DM->reseed_counter >= MAX_RESEED_COUNTER)
+    {
+        if ((addtional_input != NULL) && (add_bytelen > 0))
+        {
+            if (DM->derivation_function_flag == USE_DF)
+            {
+                if (Blockcipher_df(DM->algo, DM->Key_bytelen * 8, addtional_input, add_bytelen, addtional_input_for_seed, DM->seedlen) != SUCCESS)
+                {
+                    YBCrypto_memset(addtional_input_for_seed, 0x00, MAX_SEEDLEN);
+                    ret = FAIL_DRBG_INNER_FUNCTION;
+                    goto EXIT;
+                }
+
+                if (CTR_DRBG_Update(addtional_input_for_seed, DM) != SUCCESS)
+                {
+                    YBCrypto_memset(addtional_input_for_seed, 0x00, MAX_SEEDLEN);
+                    ret = FAIL_DRBG_INNER_FUNCTION;
+                    goto EXIT;
+                }
+            }
+            else
+            {
+                YBCrypto_memset(addtional_input_for_seed, 0x00, MAX_SEEDLEN);
+                memcpy(addtional_input_for_seed, addtional_input, add_bytelen);
+
+                if (CTR_DRBG_Update(addtional_input_for_seed, DM) != SUCCESS)
+                {
+                    YBCrypto_memset(addtional_input_for_seed, 0x00, MAX_SEEDLEN);
+                    ret = FAIL_DRBG_INNER_FUNCTION;
+                    goto EXIT;
+                }
+            }
+        }
+        else
+        {
+            YBCrypto_memset(addtional_input_for_seed, 0x00, MAX_SEEDLEN);
+        }
+    }
+    else
+    {
+        //!CTR_DRBG_Reseed
+        if (CTR_DRBG_Reseed(DM, entropy_input, entropy_bytelen, addtional_input, add_bytelen) != SUCCESS)
+        {
+            ret = FAIL_DRBG_INNER_FUNCTION;
+            goto EXIT;
+        }
+        YBCrypto_memset(addtional_input_for_seed, 0x00, MAX_SEEDLEN);
+    }
+
+    templen = request_num_of_bytes + (MAX_V_LEN_IN - (request_num_of_bytes % MAX_V_LEN_IN));
+    temp = (uint8_t *)malloc(templen);
+    ptr = temp;
+    templen = 0;
+
+    while (templen < request_num_of_bytes)
+    {
+        ctr_increase(DM->V);
+        YBCrypto_BlockCipher(DM->algo, ECB_MODE, ENCRYPT, DM->Key, DM->Key_bytelen * 8, DM->V, BC_MAX_BLOCK_SIZE, NULL, ptr);
+        ptr += BC_MAX_BLOCK_SIZE;
+        templen += BC_MAX_BLOCK_SIZE;
+    }
+
+    memcpy(output, temp, request_num_of_bytes);
+    if (requested_num_of_bits % 8 != 0)
+    {
+        output[request_num_of_bytes - 1] = temp[request_num_of_bytes - 1] & (0x000000FF & (0xFF << (8 - (requested_num_of_bits % 8))));
+    }
+
+    if (CTR_DRBG_Update(addtional_input_for_seed, DM) != SUCCESS)
+    {
+        ret = FAIL_DRBG_INNER_FUNCTION;
+        goto EXIT;
+    }
+
+    (DM->reseed_counter)++;
+
+EXIT:
+    if (ret != SUCCESS)
+    {
+        YBCrypto_memset(DM, 0x00, sizeof(DRBGManager));
+    }
+    if (temp)   free(temp);
+    YBCrypto_memset(temp, 0x00, templen);
+    YBCrypto_memset(addtional_input_for_seed, 0x00, MAX_SEEDLEN);
+
+    return ret;
+}
+// EOF

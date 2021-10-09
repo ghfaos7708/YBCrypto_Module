@@ -8,46 +8,28 @@
 #include "mode.h"
 #include "blockcipher.h"
 #include "hmac.h"
+#include "ctr_drbg.h"
 
 typedef unsigned char u8;
 
 int asc2hex(u8* dst, char* src);
 int string2hex(u8* dst, char* src);
 void print_hex( char* valName,  u8* data,  int dataLen);
+void _CTR_DRBG_ARIA_KAT_SelfTest();
 
 int main()
 {
-    // u8 entropyInput[256] = { 0 };
-	// u8 entropyReseed[256] = { 0 };
-	// u8 nonce1[128] = { 0 };
-	// u8 pString[256] = { 0 };
-	// u8 addInputReseed[256] = { 0 };
-	// u8 addInput1[256] = { 0 };
-	// u8 addInput2[256] = { 0 };
-	// u8 rand1[256] = { 0 };
-	// u8 rand2[256] = { 0 };
-	// u8 KAT[512] = { 0 };
 	u8 key[1000] = {0};
 	u8 iv[128] = {0};
 	u8 plaintext[1000] = {0};
 	u8 plaintext2[1000] = {0};
 	u8 ciphertext[1000] = {0};
-	// u8 answer[128] = {0};
 	u8 msg[1000] = {0x00,};
 	u8 msg2[1000] = {0x00,};
 	u8 digest[32] = {0x00,};
 	CipherManager CM = {0x00,};
 	HMACManager HmacCM = {0x00,};
 
-	// int entropyInputLen = 0;
-	// int entropyReseedLen = 0;
-	// int addInputReseedLen = 0;
-	// int addInput1Len = 0;
-	// int addInput2Len = 0;
-	// int pStringLen = 0;
-	// int nonce1Len = 0;
-	//int KATLen = 0;
-	// int ret = 0;
 	int keyLen = 0;
 	int ptLen = 0;
 	int ptLen2 = 0;
@@ -113,7 +95,7 @@ int main()
 	CTR_Update(&CM, plaintext2, ptLen2, ciphertext, &ctLen2);
 	CTR_Final(&CM, ciphertext, &padlen);
 	//YBCrypto_BlockCipher(ARIA,CTR_MODE,ENCRYPT,key,keyLen*8,plaintext,ptLen2,iv,ciphertext);
-	print_hex("ARIA_CTR_RET", ciphertext, ptLen);
+	// print_hex("ARIA_CTR_RET", ciphertext, ptLen);
 
 	CTR_Init(&CM, ARIA, DECRYPT, key, keyLen*8, iv);
 	CTR_Update(&CM, ciphertext, ctLen1 + ctLen2 + padlen, plaintext, &ctLen1);
@@ -153,21 +135,147 @@ int main()
 	HMAC_update(&HmacCM,msg, msglen);
 	HMAC_update(&HmacCM,msg2, msg2len);
 	HMAC_final(&HmacCM,digest);
-	print_hex("HMAC_SHA3RET", digest, 256/8);
+	// print_hex("HMAC_SHA3RET", digest, 256/8);
 
-	//! CTR_DRBG Test
-	// entropyInputLen = asc2hex(entropyInput, "CECD2F5C8AD5A29E35C15850E4A0339B");
-	// nonce1Len = asc2hex(nonce1, "AD8505D91430A655C6EA44518AB1FB4E");
-	// entropyReseedLen = asc2hex(entropyReseed, "7495A5875B62F4BF8E7FBE3CC3169714");
-	// ret = GTCrypto_CTR_DRBG_Instantiate(NULL, 0, nonce1, nonce1Len, NULL, 0, USE_DERIVATION_FUNCTION);
-	// GTCrypto_CTR_DRBG_Generate(rand1, 1024, entropyReseed, entropyReseedLen, NULL, 0, USE_PREDICTION_RESISTANCE);	
-	// print_hex("ReturnedBits", rand1, 1024/8);
+	//! CTR DRBG Test
+	// _CTR_DRBG_ARIA_KAT_SelfTest();
+	int32_t entropyInputLen;
+	int32_t nonce1Len;
+	int32_t entropyReseedLen;
 
-	//! PreSelf Test
-	//ret = GTCrypto_PreSelfTest();
+	uint8_t rand1[1000] = {0x00,};
+	uint8_t entropyInput[1000] = {0x00,};
+	uint8_t nonce1[1000] = {0x00,};
+	uint8_t entropyReseed[1000] = {0x00,};
+	DRBGManager DRBG_DM = {0x00,};
 
+	entropyInputLen = asc2hex(entropyInput, "CECD2F5C8AD5A29E35C15850E4A0339B");
+	nonce1Len = asc2hex(nonce1, "AD8505D91430A655C6EA44518AB1FB4E");
+	entropyReseedLen = asc2hex(entropyReseed, "7495A5875B62F4BF8E7FBE3CC3169714");
+	CTR_DRBG_Instantiate(&DRBG_DM,ARIA,128, entropyInput, entropyInputLen, nonce1, nonce1Len, NULL, 0, USE_DF);
+	CTR_DRBG_Generate(&DRBG_DM, rand1, 1024, entropyReseed, entropyReseedLen, NULL, 0, USE_PR);	
+	print_hex("ReturnedBits", (uint8_t *)&DRBG_DM, 1024/8);
     return 0;
 }
+
+//! CTR_DRBG testvector 
+typedef struct _CTRDRBG_TV_ {
+	u8 EntropyInputStr[256];
+	u8 NonceStr[256];
+	u8 PStringStr[256];
+	u8 EntropyInputReseedStr[256]; 	  //if pre-resi on, then EntropyInputPR1
+	u8 AdditionalInputReseedStr[256]; //if pre-resi on, then EntropyInputPR2
+	u8 AdditionalInput1Str[256];      //if pre-resi on, then AdditionalInput1
+	u8 AdditionalInput2Str[256];      //if pre-resi on, then  AdditionalInput1
+	u8 KAT[512];
+	int returnedBitSize;
+	int prediction_resistance_flag;
+}CTRDRBG_TV;
+
+//! we use TTAK.KO-12.0189_R1's CTR_DRBG testvector 
+const CTRDRBG_TV CTR_DRBG_ARIA_TestVectors[] = { 
+
+	{ "000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F", //EntropyInputStr
+	"2021222324252627",  //NonceStr
+	"404142434445464748494A4B4C4D4E4F505152535455565758595A5B5C5D5E5F",	 //PStringStr
+	"808182838485868788898A8B8C8D8E8F909192939495969798999A9B9C9D9E9F",  //Entorphy Resseed
+	"A0A1A2A3A4A5A6A7A8A9AAABACADAEAFB0B1B2B3B4B5B6B7B8B9BABBBCBDBEBF",  //Entrophy input reseed
+	"606162636465666768696A6B6C6D6E6F707172737475767778797A7B7C7D7E7F",	 //AdditionalInput 1
+	"",                                                                  //AdditionalInput 2
+	"353599DF86461BD7BA6D785E07331782DD7AEB105BF8A2A85BE10E8199536393", //!done : use derivation and not use prediction resistance
+	256,NO_PR },
+	
+	// { "000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F", //EntropyInputStr
+	// "2021222324252627",  //NonceStr
+	// "404142434445464748494A4B4C4D4E4F505152535455565758595A5B5C5D5E5F",	 //PStringStr
+	// "808182838485868788898A8B8C8D8E8F909192939495969798999A9B9C9D9E9F",  //EntropyInputPR 1
+	// "C0C1C2C3C4C5C6C7C8C9CACBCCCDCECFD0D1D2D3D4D5D6D7D8D9DADBDCDDDEDF",	 //EntropyInputPR 2
+	// "606162636465666768696A6B6C6D6E6F707172737475767778797A7B7C7D7E7F",	 //AdditionalInput 1
+	// "A0A1A2A3A4A5A6A7A8A9AAABACADAEAFB0B1B2B3B4B5B6B7B8B9BABBBCBDBEBF",	 //AdditionalInput 2
+	// "547F7EBD69020F99BBEAE8EC883157E61EC6BAB974AE9B2888EC311AF302F0A0", //!done : use derivation and prediction resistance
+	// 256,USE_PR },
+
+};
+
+
+void _CTR_DRBG_ARIA_KAT_SelfTest()
+{
+	u8 entropyInput[256] = { 0 };
+	u8 entropyReseed[256] = { 0 };
+	u8 entropyinputPR1[256] = { 0 };
+	u8 entropyinputPR2[256] = { 0 };
+	u8 nonce1[128] = { 0 };
+	u8 pString[256] = { 0 };
+	u8 addInputReseed[256] = { 0 };
+	u8 addInput1[256] = { 0 };
+	u8 addInput2[256] = { 0 };
+	u8 rand1[256] = { 0 };
+	u8 rand2[256] = { 0 };
+	u8 KAT[512] = { 0 };
+
+	int entropyInputLen = 0;
+	int entropyReseedLen = 0;
+	int entropyinputPR1Len = 0;
+	int entropyinputPR2Len = 0;
+	int addInputReseedLen = 0;
+	int addInput1Len = 0;
+	int addInput2Len = 0;
+	int pStringLen = 0;
+	int nonce1Len = 0;
+	int KATLen = 0;
+	int returnedBitSize = 0;
+
+	int ret = SUCCESS;
+	int cnt_i;
+	DRBGManager DRBG_DM = {0x00,};
+
+	for (cnt_i = 0; cnt_i < sizeof(CTR_DRBG_ARIA_TestVectors) / sizeof(CTRDRBG_TV); cnt_i++)
+	{
+		entropyInputLen = asc2hex(entropyInput, (char *)CTR_DRBG_ARIA_TestVectors[cnt_i].EntropyInputStr);
+		nonce1Len = asc2hex(nonce1, (char *)CTR_DRBG_ARIA_TestVectors[cnt_i].NonceStr);
+		pStringLen = asc2hex(pString, (char *)CTR_DRBG_ARIA_TestVectors[cnt_i].PStringStr);
+		KATLen = asc2hex(KAT, (char *)CTR_DRBG_ARIA_TestVectors[cnt_i].KAT);
+
+		returnedBitSize = CTR_DRBG_ARIA_TestVectors[cnt_i].returnedBitSize;
+
+		if (CTR_DRBG_ARIA_TestVectors[cnt_i].prediction_resistance_flag == NO_PR)
+		{
+			entropyReseedLen = asc2hex(entropyReseed, (char *)CTR_DRBG_ARIA_TestVectors[cnt_i].EntropyInputReseedStr);
+			addInputReseedLen = asc2hex(addInputReseed, (char *)CTR_DRBG_ARIA_TestVectors[cnt_i].AdditionalInputReseedStr);
+			addInput1Len = asc2hex(addInput1, (char *)CTR_DRBG_ARIA_TestVectors[cnt_i].AdditionalInput1Str);
+			addInput2Len = asc2hex(addInput2, (char *)CTR_DRBG_ARIA_TestVectors[cnt_i].AdditionalInput2Str);
+
+			CTR_DRBG_Instantiate(&DRBG_DM, ARIA, 128, entropyInput, entropyInputLen, nonce1, nonce1Len, pString, pStringLen, USE_DF);
+			CTR_DRBG_Generate(&DRBG_DM, rand1, CTR_DRBG_ARIA_TestVectors[cnt_i].returnedBitSize, NULL, 0, addInput1, addInput1Len, NO_PR);
+			CTR_DRBG_Reseed(&DRBG_DM, entropyReseed, entropyReseedLen, addInputReseed, addInputReseedLen);
+			CTR_DRBG_Generate(&DRBG_DM,rand2, CTR_DRBG_ARIA_TestVectors[cnt_i].returnedBitSize, NULL, 0, NULL, 0, NO_PR);
+		}
+		else
+		{
+			entropyinputPR1Len = asc2hex(entropyinputPR1, (char *)CTR_DRBG_ARIA_TestVectors[cnt_i].EntropyInputReseedStr);
+			entropyinputPR2Len = asc2hex(entropyinputPR2, (char *)CTR_DRBG_ARIA_TestVectors[cnt_i].AdditionalInputReseedStr);
+			addInput1Len = asc2hex(addInput1, (char *)CTR_DRBG_ARIA_TestVectors[cnt_i].AdditionalInput1Str);
+			addInput2Len = asc2hex(addInput2, (char *)CTR_DRBG_ARIA_TestVectors[cnt_i].AdditionalInput2Str);
+
+			CTR_DRBG_Instantiate(&DRBG_DM, ARIA, 128, entropyInput, entropyInputLen, nonce1, nonce1Len, pString, pStringLen, USE_DF);
+			CTR_DRBG_Generate(&DRBG_DM, rand1, CTR_DRBG_ARIA_TestVectors[cnt_i].returnedBitSize, entropyinputPR1, entropyinputPR1Len, addInput1, addInput1Len, USE_PR);
+			CTR_DRBG_Generate(&DRBG_DM, rand2, CTR_DRBG_ARIA_TestVectors[cnt_i].returnedBitSize, entropyinputPR2, entropyinputPR2Len, addInput2, addInput2Len, USE_PR);
+		}
+					
+		if (memcmp(KAT, rand2, returnedBitSize / 8)) 
+		{
+			printf("DRBG_SelfTest Fail\n");
+			print_hex("origin : ", KAT, returnedBitSize / 8);
+			print_hex("ours : ", rand2, returnedBitSize / 8);
+			ret = FAIL_KATSELF_TEST;
+		}
+		else
+		{
+			printf("DRBG_SelfTest SUCCESS\n");
+		}
+	}
+}
+
 
 int asc2hex(u8* dst, char* src)
 {
