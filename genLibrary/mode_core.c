@@ -2,7 +2,7 @@
 #include "blockcipher.h"
 #include "mode.h"
 
-static int CiperManager_Clean(CipherManager *c)
+static int32_t CiperManager_Clean(CipherManager *c)
 {
     int32_t ret = SUCCESS;
     YBCrypto_memset(c, 0x00, sizeof(CipherManager));
@@ -30,7 +30,7 @@ static void count_increase(uint8_t *ctr)
     }
 }
 
-int ECB_Init(CipherManager *c, int32_t ALG, int32_t direct, const uint8_t *userkey, uint32_t key_bitlen)
+int32_t ECB_Init(CipherManager *c, int32_t ALG, int32_t direct, const uint8_t *userkey, uint32_t key_bitlen)
 {
     // 1. set informations in CipherManager
     // 2. key scheduling
@@ -80,7 +80,7 @@ int ECB_Init(CipherManager *c, int32_t ALG, int32_t direct, const uint8_t *userk
     return ret;
 }
 
-int ECB_Update(CipherManager *c, const uint8_t *in, uint64_t in_byteLen, uint8_t *out, uint64_t *out_byteLen)
+int32_t ECB_Update(CipherManager *c, const uint8_t *in, uint64_t in_byteLen, uint8_t *out, uint64_t *out_byteLen)
 {
     int ret = SUCCESS;
     int count_loop = 0;
@@ -127,9 +127,9 @@ int ECB_Update(CipherManager *c, const uint8_t *in, uint64_t in_byteLen, uint8_t
     return ret;
 }
 
-int ECB_Final(CipherManager *c, uint8_t *out, uint32_t *pad_bytelen)
+int32_t ECB_Final(CipherManager *c, uint8_t *out, uint32_t *pad_bytelen)
 {
-    int ret = SUCCESS;
+    int32_t ret = SUCCESS;
 
     //* zero padding
     if (c->remained_len != 0)
@@ -160,7 +160,7 @@ int ECB_Final(CipherManager *c, uint8_t *out, uint32_t *pad_bytelen)
     return ret;
 }
 
-int CBC_Init(CipherManager *c, int32_t ALG, int32_t direct, const uint8_t *userkey, int32_t key_bitlen, const uint8_t *iv)
+int32_t CBC_Init(CipherManager *c, int32_t ALG, int32_t direct, const uint8_t *userkey, int32_t key_bitlen, const uint8_t *iv)
 {
     int32_t ret = SUCCESS;
 
@@ -210,11 +210,11 @@ int CBC_Init(CipherManager *c, int32_t ALG, int32_t direct, const uint8_t *userk
     return ret;
 }
 
-int CBC_Update(CipherManager *c, const uint8_t *in, uint64_t in_byteLen, uint8_t *out, uint64_t *out_byteLen)
+int32_t CBC_Update(CipherManager *c, const uint8_t *in, uint64_t in_byteLen, uint8_t *out, uint64_t *out_byteLen)
 {
-    int ret = SUCCESS;
-    int count_loop = 0;
-    int cnt_i = 0;
+    int32_t ret = SUCCESS;
+    int32_t count_loop = 0;
+    int32_t cnt_i = 0;
     uint64_t Update_bytelen = in_byteLen;
     uint8_t Update_index = 0;
 
@@ -276,10 +276,10 @@ int CBC_Update(CipherManager *c, const uint8_t *in, uint64_t in_byteLen, uint8_t
     return ret;
 }
 
-int CBC_Final(CipherManager *c, uint8_t *out, uint32_t *pad_bytelen)
+int32_t CBC_Final(CipherManager *c, uint8_t *out, uint32_t *pad_bytelen)
 {
-    int ret = SUCCESS;
-    int cnt_i = 0;
+    int32_t ret = SUCCESS;
+    int32_t cnt_i = 0;
 
     //* zero padding
     if (c->remained_len != 0)
@@ -313,7 +313,7 @@ int CBC_Final(CipherManager *c, uint8_t *out, uint32_t *pad_bytelen)
     return ret;
 }
 
-int CTR_Init(CipherManager *c, int32_t ALG, int32_t direct, const uint8_t *userkey, int32_t key_bitlen, const uint8_t *iv)
+int32_t CTR_Init(CipherManager *c, int32_t ALG, int32_t direct, const uint8_t *userkey, int32_t key_bitlen, const uint8_t *iv)
 {
     int32_t ret = SUCCESS;
 
@@ -348,11 +348,11 @@ int CTR_Init(CipherManager *c, int32_t ALG, int32_t direct, const uint8_t *userk
     return ret;
 }
 
-int CTR_Update(CipherManager *c, const uint8_t *in, uint64_t in_byteLen, uint8_t *out, uint64_t *out_byteLen)
+int32_t CTR_Update(CipherManager *c, const uint8_t *in, uint64_t in_byteLen, uint8_t *out, uint64_t *out_byteLen)
 {
-    int ret = SUCCESS;
-    int count_loop = 0;
-    int cnt_i = 0;
+    int32_t ret = SUCCESS;
+    int32_t count_loop = 0;
+    int32_t cnt_i = 0;
     uint64_t Update_bytelen = in_byteLen;
     uint8_t Update_index = 0;
     uint8_t ciphertext[BC_MAX_BLOCK_SIZE];
@@ -395,10 +395,10 @@ int CTR_Update(CipherManager *c, const uint8_t *in, uint64_t in_byteLen, uint8_t
     return ret;
 }
 
-int CTR_Final(CipherManager *c, uint8_t *out, uint32_t *pad_bytelen)
+int32_t CTR_Final(CipherManager *c, uint8_t *out, uint32_t *pad_bytelen)
 {
-    int ret = SUCCESS;
-    int cnt_i = 0;
+    int32_t ret = SUCCESS;
+    int32_t cnt_i = 0;
     uint8_t ciphertext[BC_MAX_BLOCK_SIZE];
     YBCrypto_memset(ciphertext, 0x00, sizeof(ciphertext));
 

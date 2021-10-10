@@ -1,4 +1,89 @@
-#gcc -O3  -Wall YBCrypto.c hash_core.c main.c blockcipher_core.c mode_core.c hmac_core.c mode.c ctrdrbg_core.c
-
+# gcc -O3  -Wall YBCrypto.c hash_core.c main.c blockcipher_core.c mode_core.c hmac_core.c mode.c ctrdrbg_core.c KAT_test.c
 #cppcheck --enable=all --force YBCrypto.c hash_core.c main.c blockcipher_core.c mode_core.c hmac_core.c mode.c ctrdrbg_core.c 
 #cppcheck --enable=all --force --check-config YBCrypto.c hash_core.c main.c blockcipher_core.c mode_core.c hmac_core.c mode.c ctrdrbg_core.c 
+
+RM := rm -rf
+
+C_SRCS += \
+aria.c \
+aria_core.c \
+aria_mode.c \
+ctrdrbg.c \
+ctrdrbg_core.c \
+hmac.c \
+hmac_core.c \
+sha256.c \
+sha256_core.c \
+entropy.c \
+GractorCrypto.c \
+integrityTest.c \
+KAT_selftest.c
+
+OBJS += \
+./build/aria.o \
+./build/aria_core.o \
+./build/aria_mode.o \
+./build/ctrdrbg.o \
+./build/ctrdrbg_core.o \
+./build/hmac.o \
+./build/hmac_core.o \
+./build/sha256.o \
+./build/sha256_core.o \
+./build/entropy.o \
+./build/GractorCrypto.o \
+./build/integrityTest.o \
+./build/KAT_selftest.o
+
+C_DEPS += \
+./build/aria.d \
+./build/aria_core.d \
+./build/aria_mode.d \
+./build/ctrdrbg.d \
+./build/ctrdrbg_core.d \
+./build/hmac.d \
+./build/hmac_core.d \
+./build/sha256.d \
+./build/sha256_core.d \
+./build/entropy.d \
+./build/GractorCrypto.d \
+./build/integrityTest.d \
+./build/KAT_selftest.d
+
+build/%.o: %.c
+	@echo 'Building file: $<'
+	@echo 'Invoking: GCC C Compiler'
+	mkdir -p build
+	gcc -O3 -Werror -c -fmessage-length=0 -fvisibility=hidden -fPIC -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
+	@echo 'Finished building: $<'
+	@echo ' '
+
+USER_OBJS :=
+
+LIBS := -ldl
+
+ifneq ($(MAKECMDGOALS),clean)
+ifneq ($(strip $(C_DEPS)),)
+-include $(C_DEPS)
+endif
+endif
+
+
+#! All Target
+all: YBCrypto.dylib
+
+#! Tool invocations
+YBCrypto.dylib: $(OBJS) $(USER_OBJS)
+	@echo 'Building target: $@'
+	@echo 'Invoking: GCC C Linker'
+	gcc -shared -o "YBCrypto.dylib" $(OBJS) $(USER_OBJS) $(LIBS)
+	@echo 'Finished building target: $@'
+	@echo ' '
+
+#! Other Targets
+clean:
+	-$(RM) $(LIBRARIES)$(OBJS)$(C_DEPS) YBCrypto.dylib
+	-$(RM) ./build
+	-@echo ' '
+
+.PHONY: all clean dependents
+.SECONDARY:

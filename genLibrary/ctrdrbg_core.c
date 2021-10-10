@@ -193,6 +193,7 @@ static int32_t CTR_DRBG_Update(uint8_t *provided_data, DRBGManager *DM)
     int32_t cnt_i = 0x00;
     int32_t ret = SUCCESS;
 
+    YBCrypto_memset(temp,0x00,MAX_SEEDLEN);
     if (provided_data == NULL)
     {
         ret = FAIL_INVALID_INPUT_DATA;
@@ -214,15 +215,19 @@ static int32_t CTR_DRBG_Update(uint8_t *provided_data, DRBGManager *DM)
         temp[cnt_i] ^= provided_data[cnt_i];
     }
 
+
     memcpy(DM->Key, temp, DM->Key_bytelen);
+
+
     ptr = temp;
-    memcpy(DM->V, ptr + DM->seedlen - (DM->Vlen), DM->Vlen);
+    memcpy(DM->V, ptr + (DM->seedlen) - (DM->Vlen), DM->Vlen);
 
 EXIT:
     if (ret != SUCCESS)
     {
         YBCrypto_memset(DM, 0x00, sizeof(DRBGManager));
     }
+    ptr = NULL;
     YBCrypto_memset(temp, 0x00, DM->seedlen);
     return ret;
 }
@@ -255,7 +260,7 @@ int32_t CTR_DRBG_Instantiate(DRBGManager *DM,
 
     if (derivation_function_flag == USE_DF)
     {
-        if (entropy_bytelen < key_bitlen / 8)
+        if (entropy_bytelen < (key_bitlen / 8))
         {
             ret = FAIL_DRBG_ENTROPY_LEN_SMALL;
             goto EXIT;

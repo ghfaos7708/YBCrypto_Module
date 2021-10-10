@@ -3,7 +3,6 @@
 
 #include "YBCrypto.h"
 
-
 #define SEEDLEN_128 BC_MAX_BLOCK_SIZE + 16
 #define SEEDLEN_192 BC_MAX_BLOCK_SIZE + 24
 #define SEEDLEN_256 BC_MAX_BLOCK_SIZE + 32

@@ -9,6 +9,13 @@ int32_t YBCrypto_BlockCipher(int32_t ALG, int32_t MODE, int32_t direct, const ui
     uint64_t out_byteLen = 0;
     uint32_t pad_bytelen = 0;
 
+    //TODO Module 상태
+
+    //! check [ALG]
+    if((ALG != ARIA) && (ALG != AES))
+    {
+
+    }
     switch (MODE)
     {
     case ECB_MODE:

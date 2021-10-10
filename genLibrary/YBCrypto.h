@@ -52,8 +52,6 @@ typedef struct YBCrtypto_ALG_TESTED_
     int32_t isDRBGTested;
 } IS_ALG_TESTED;
 
-IS_ALG_TESTED algTestedFlag;
-
 //! block cipher ////////////////////////////////////////////////////////////////
 #define AES 0x94300001
 #define ARIA 0x94300002
@@ -62,13 +60,13 @@ IS_ALG_TESTED algTestedFlag;
 #define ECB_MODE 0x94300011
 #define CBC_MODE 0x94300012
 #define CTR_MODE 0x94300013
-#define AES_MAXNR 14
+#define BC_MAX_ENCRYPTED_LEN 0x100000 //2^20 (byte)
 #define BC_MAX_BLOCK_SIZE 16 //AES, ARIA, SEED have 16 bytes inner state
 #define BC_MAX_KEY_SIZE 32 
 
 typedef struct aes_key_st
 {
-    uint32_t rd_key[4 * (AES_MAXNR + 1)];
+    uint32_t rd_key[4 * (BC_MAX_BLOCK_SIZE - 1)]; //AES_MAXNR + 1 = 15
     int32_t rounds;
 } AES_KEY;
 
@@ -147,7 +145,7 @@ typedef struct YBCrypto_Hmac_manager_st
 #define NO_PR  0x94500004
 typedef struct YBCrypto_CTR_DRBG_manager_st
 {
-    uint8_t algo; // algo is default which is ARIA-128
+    uint32_t algo; // algo is default which is ARIA-128
     uint8_t V[BC_MAX_BLOCK_SIZE];
     int32_t Vlen;
     uint8_t Key[32];

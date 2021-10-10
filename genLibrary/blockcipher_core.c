@@ -574,7 +574,7 @@ static const uint32_t rcon[] = {
 /**
  * Expand the cipher key into the encryption key schedule.
  */
-int AES_set_encrypt_key(const uint8_t *userKey, int bits, AES_KEY *key)
+int32_t AES_set_encrypt_key(const uint8_t *userKey, int bits, AES_KEY *key)
 {
 
     uint32_t *rk;
@@ -675,7 +675,7 @@ int AES_set_encrypt_key(const uint8_t *userKey, int bits, AES_KEY *key)
 /**
  * Expand the cipher key into the decryption key schedule.
  */
-int AES_set_decrypt_key(const uint8_t *userKey, int bits, AES_KEY *key)
+int32_t AES_set_decrypt_key(const uint8_t *userKey, int bits, AES_KEY *key)
 {
 
     uint32_t *rk = NULL;
@@ -1226,7 +1226,7 @@ void ARIA_RotXOR(const uint8_t* s, int n, uint8_t* t)
 	}
 }
 
-int ARIA_EncKeySetup(const uint8_t* userKey, int bits, ARIA_KEY *key)
+int32_t ARIA_EncKeySetup(const uint8_t* userKey, int bits, ARIA_KEY *key)
 {
     int ret = SUCCESS;
 	int  i, R = (bits + 256) / 32, q;
@@ -1286,7 +1286,7 @@ int ARIA_EncKeySetup(const uint8_t* userKey, int bits, ARIA_KEY *key)
 	return ret;
 }
 
-int ARIA_DecKeySetup(const uint8_t* userKey, int bits, ARIA_KEY *key)
+int32_t ARIA_DecKeySetup(const uint8_t* userKey, int bits, ARIA_KEY *key)
 {
     int ret = SUCCESS;
 
