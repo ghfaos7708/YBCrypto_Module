@@ -15,9 +15,19 @@ typedef unsigned char u8;
 int asc2hex(u8* dst, char* src);
 int string2hex(u8* dst, char* src);
 void print_hex( char* valName,  u8* data,  int dataLen);
+void Cipher_Test();
 void _CTR_DRBG_ARIA_KAT_SelfTest();
 
 int main()
+{	
+	// Load_YBCrypto();
+	Destroy_YBCrypto();
+	// Cipher_Test();
+	// _CTR_DRBG_ARIA_KAT_SelfTest();
+	return 0;
+}
+
+void Cipher_Test()
 {
 	u8 key[1000] = {0};
 	u8 iv[128] = {0};
@@ -137,9 +147,6 @@ int main()
 	HMAC_final(&HmacCM,digest);
 	// print_hex("HMAC_SHA3RET", digest, 256/8);
 
-	//! CTR DRBG Test
-	_CTR_DRBG_ARIA_KAT_SelfTest();
-    return 0;
 }
 
 //! CTR_DRBG testvector 

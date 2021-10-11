@@ -160,8 +160,13 @@ typedef struct YBCrypto_CTR_DRBG_manager_st
 
 //! YBCrypto common API /////////////////////////////////////////////////////////////
 void YBCrypto_memset(void *pointer, int32_t value, int32_t size);
-void YBCrypto_ModuleInfo();
-int32_t YBCrypto_GetState();
+void YBCrypto_ModuleInfo(void);
+void YBCrypto_ChangeState(int32_t newState);
+int32_t YBCrypto_GetState(void);
+
+//TODO 작업용
+void Load_YBCrypto(void);
+void Destroy_YBCrypto(void);
 
 //! YBCrypto BlockCipher API ////////////////////////////////////////////////////////
 int32_t YBCrypto_BlockCipher(int32_t ALG, int32_t MODE, int32_t direct, const uint8_t *user_key, uint32_t key_bitlen, const uint8_t *in, uint64_t in_byteLen, const uint8_t *iv, uint8_t *out);
