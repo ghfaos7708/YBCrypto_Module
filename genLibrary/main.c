@@ -20,8 +20,8 @@ void _CTR_DRBG_ARIA_KAT_SelfTest();
 
 int main()
 {	
-	// Load_YBCrypto();
-	Destroy_YBCrypto();
+	Load_YBCrypto();
+	// Destroy_YBCrypto();
 	// Cipher_Test();
 	// _CTR_DRBG_ARIA_KAT_SelfTest();
 	return 0;
@@ -350,7 +350,6 @@ int string2hex(u8* dst, char* src)
 
 		i++;
 	}
-
 	return (i);
 }
 

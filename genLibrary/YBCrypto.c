@@ -16,29 +16,31 @@ static int32_t Inner_API_PreSelfTest(void)
 {
 	int32_t ret = SUCCESS;
 
-	return ret;
-}
-
-static int32_t Inner_API_Initialize(void)
-{
-	int32_t ret = SUCCESS;
-
 	YBCrypto_memset(&algTestedFlag, 0x00, sizeof(IS_ALG_TESTED));
 	YBCrypto_memset(&CM, 0x00, sizeof(CipherManager));
 	YBCrypto_memset(&HM, 0x00, sizeof(HashManager));
 	YBCrypto_memset(&MM, 0x00, sizeof(HMACManager));
 	YBCrypto_memset(&DM, 0x00, sizeof(DRBGManager));
 
-	//TODO Integrity Test
-	//TODO Entropy Test
+	algTestedFlag.isBlockCipherTested = FAIL_NOT_PERFORM_KATSELFTEST;
+	algTestedFlag.isHashTested = FAIL_NOT_PERFORM_KATSELFTEST;
+	algTestedFlag.isHMACTested = FAIL_NOT_PERFORM_KATSELFTEST;
+	algTestedFlag.isDRBGTested = FAIL_NOT_PERFORM_KATSELFTEST;
 
-	//! KAT Test
+	//TODO KAT Test
 	ret = Inner_API_KatSelfTest();
 
-
+	if(ret != SUCCESS)
+	{
+		fprintf(stdout, "=*Location : Inner_API_PreSelfTest      =\n");
+		goto EXIT;
+	}
+	//TODO Entropy Test
+	//TODO Integrity Test
 
 EXIT:
 	return ret;
+
 }
 
 int32_t YBCrypto_GetState(void)
@@ -110,24 +112,29 @@ void Load_YBCrypto(void)
 {
 	int32_t ret = SUCCESS;
 
-	YBCrypto_ChangeState(YBCrtypto_CM_LOAD);
-	ret = Inner_API_Initialize();
-
-	if (ret != SUCCESS)
-	{
-		fprintf(stdout, "=[CRITICAL ERROR DETECTED]==============\n");
-		fprintf(stdout, "=[Location : Load_YBCrypto]=============\n");
-		YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
-		goto EXIT;
-	}
-	else
-	{
-
 #ifdef _WIN64
 		system("cls");
 #else
 		system("clear");
 #endif
+	YBCrypto_ChangeState(YBCrtypto_CM_LOAD);
+	YBCrypto_ChangeState(YBCrtypto_CM_PRE_SELFTEST);
+	fprintf(stdout, "=========================================\n");
+	fprintf(stdout, "=       [YBCrypto V1.0 Load Success]    =\n");
+	fprintf(stdout, "=*CM-> YBCrtypto_CM_PRE_SELFTEST        =\n");
+	fprintf(stdout, "=*PreSelf Testing......                 =\n");
+	ret = Inner_API_PreSelfTest();
+
+	if (ret != SUCCESS)
+	{
+		fprintf(stdout, "=*Location : Load_YBCrypto              =\n");
+		fprintf(stdout, "=*CM-> YBCrtypto_CM_CRITICAL_ERROR      =\n");
+		fprintf(stdout, "=[CRITICAL ERROR DETECTED]===============\n");
+		YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
+		goto EXIT;
+	}
+	else
+	{
 		fprintf(stdout, "=========================================\n");
 		fprintf(stdout, "=       [YBCrypto V1.0 Initialize]      =\n");
 		fprintf(stdout, "=*[Support Crypto]                      =\n");
@@ -136,6 +143,7 @@ void Load_YBCrypto(void)
 		fprintf(stdout, "=*--> HMAC        : SHA_256, SHA3       =\n");
 		fprintf(stdout, "=*--> CTR_DRBG    : ARIA, AES           =\n");
 		fprintf(stdout, "=*[Ready to Start YBCrypto V1.0]        =\n");
+		fprintf(stdout, "=*CM-> YBCrtypto_CM_NOMAL_VM            =\n");
 		fprintf(stdout, "=====================[made by YoungBeom]=\n\n\n");
 		YBCrypto_ChangeState(YBCrtypto_CM_NOMAL_VM);
 	}
@@ -155,12 +163,6 @@ void Destroy_YBCrypto(void)
 	YBCrypto_memset(&MM, 0x00, sizeof(HMACManager));
 	YBCrypto_memset(&DM, 0x00, sizeof(DRBGManager));
 
-#ifdef _WIN64
-	system("cls");
-#else
-	system("clear");
-#endif
-
 	if (YBCrypto_GetState() == YBCrtypto_CM_CRITICAL_ERROR)
 	{
 		fprintf(stdout, "=========================================\n");
@@ -173,6 +175,12 @@ void Destroy_YBCrypto(void)
 	}
 	else
 	{
+
+#ifdef _WIN64
+	system("cls");
+#else
+	system("clear");
+#endif
 		fprintf(stdout, "=========================================\n");
 		fprintf(stdout, "=     [Destroy YBCryptoV1.0........]    =\n");
 		fprintf(stdout, "=*              Good Bye~!!            *=\n");

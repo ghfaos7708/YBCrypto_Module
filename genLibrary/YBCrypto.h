@@ -101,11 +101,11 @@ typedef struct YBCrypto_cipher_manager_st
 #define SHA256 0x94400001
 #define SHA3 0x94400002
 #define LSH 0x94400003
+#define HASH_DIGEST 32
 
 #define SHA256_SHORT uint8_t
 #define SHA256_LONG uint64_t
 #define SHA256_BLOCK_SIZE 64
-#define SHA256_DIGEST_LENGTH 32
 
 #define SHA3_256_SHORT uint8_t
 #define SHA3_256_LONG uint32_t
@@ -170,5 +170,6 @@ void Destroy_YBCrypto(void);
 
 //! YBCrypto BlockCipher API ////////////////////////////////////////////////////////
 int32_t YBCrypto_BlockCipher(int32_t ALG, int32_t MODE, int32_t direct, const uint8_t *user_key, uint32_t key_bitlen, const uint8_t *in, uint64_t in_byteLen, const uint8_t *iv, uint8_t *out);
+int32_t YBCrypto_Hash(int32_t ALG, int32_t MODE, int32_t direct, const uint8_t *user_key, uint32_t key_bitlen, const uint8_t *in, uint64_t in_byteLen, const uint8_t *iv, uint8_t *out);
 #endif
 //EOF

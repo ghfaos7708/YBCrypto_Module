@@ -227,7 +227,7 @@ int SHA256_MD(unsigned char *in, int len, unsigned char *out)
     if (!SHA256_final(&c, out))
         return FAIL_CORE;
 
-    return SHA256_DIGEST_LENGTH;
+    return HASH_DIGEST;
 }
 
 //! [SHA-3]/////////////////////////////////////////////////////////////////////////////////////////////////////////
