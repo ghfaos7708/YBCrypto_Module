@@ -3,7 +3,7 @@
 
 CipherManager CM;
 
-int32_t YBCrypto_BlockCipher(int32_t ALG, int32_t MODE, int32_t direct, const uint8_t *user_key, uint32_t key_bitlen, const uint8_t *in, uint64_t in_byteLen, const uint8_t *iv, uint8_t *out)
+int32_t YBCrypto_BlockCipher(uint32_t ALG, int32_t MODE, int32_t direct, const uint8_t *user_key, uint32_t key_bitlen, const uint8_t *in, uint64_t in_byteLen, const uint8_t *iv, uint8_t *out)
 {
     int32_t ret = SUCCESS;
     uint64_t out_byteLen = 0;

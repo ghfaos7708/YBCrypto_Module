@@ -169,7 +169,7 @@ void Load_YBCrypto(void);
 void Destroy_YBCrypto(void);
 
 //! YBCrypto BlockCipher API ////////////////////////////////////////////////////////
-int32_t YBCrypto_BlockCipher(int32_t ALG, int32_t MODE, int32_t direct, const uint8_t *user_key, uint32_t key_bitlen, const uint8_t *in, uint64_t in_byteLen, const uint8_t *iv, uint8_t *out);
-int32_t YBCrypto_Hash(int32_t ALG, int32_t MODE, int32_t direct, const uint8_t *user_key, uint32_t key_bitlen, const uint8_t *in, uint64_t in_byteLen, const uint8_t *iv, uint8_t *out);
+int32_t YBCrypto_BlockCipher(uint32_t ALG, int32_t MODE, int32_t direct, const uint8_t *user_key, uint32_t key_bitlen, const uint8_t *in, uint64_t in_byteLen, const uint8_t *iv, uint8_t *out);
+int32_t YBCrypto_Hash(uint32_t ALG, const uint8_t *msg, uint64_t in_byteLen, uint8_t *md);
 #endif
 //EOF

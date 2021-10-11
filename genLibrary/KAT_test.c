@@ -12,41 +12,44 @@ extern HashManager HM;
 extern HMACManager MM;
 extern DRBGManager DM;
 
-static int32_t asc2hex(uint8_t* dst, const char* src)
+static void print_hex( char* valName,  uint8_t* data,  uint32_t dataByteLen)
+{
+	int32_t i = 0;
+
+	printf("%s [%dbyte] :", valName, dataByteLen);
+	for (i = 0; i < dataByteLen; i++)
+	{
+		if (!(i & 0x0F))
+			printf("\n");
+		printf(" %02X", data[i]);
+	}
+	printf("\n\n");
+}
+
+static int32_t asc2hex(uint8_t* dst, char* src)
 {
 	uint8_t temp = 0x00;
-	uint32_t cnt_i = 0;
+	int i = 0;
 
-	while (src[cnt_i] != 0x00) {
+	while (src[i] != 0x00)
+	{
 		temp = 0x00;
 
-		if ((src[cnt_i] >= 0x30) && (src[cnt_i] <= 0x39))
-			temp = src[cnt_i] - '0';
-		else if ((src[cnt_i] >= 0x41) && (src[cnt_i] <= 0x5A))
-			temp = src[cnt_i] - 'A' + 10;
-		else if ((src[cnt_i] >= 0x61) && (src[cnt_i] <= 0x7A))
-			temp = src[cnt_i] - 'a' + 10;
+		if ((src[i] >= 0x30) && (src[i] <= 0x39))
+			temp = src[i] - '0';
+		else if ((src[i] >= 0x41) && (src[i] <= 0x5A))
+			temp = src[i] - 'A' + 10;
+		else if ((src[i] >= 0x61) && (src[i] <= 0x7A))
+			temp = src[i] - 'a' + 10;
 		else
 			temp = 0x00;
 
-		(cnt_i & 1) ? (dst[cnt_i >> 1] ^= temp & 0x0F) : (dst[cnt_i >> 1] = 0, dst[cnt_i >> 1] = temp << 4);
+		(i & 1) ? (dst[i >> 1] ^= temp & 0x0F) : (dst[i >> 1] = 0, dst[i >> 1] = temp << 4);
 
-		cnt_i++;
+		i++;
 	}
 
-	return ((cnt_i + 1) / 2);
-}
-
-static int32_t string2hex(uint8_t* dst, const char* src)
-{
-	uint32_t cnt_i = 0;
-
-	while (src[cnt_i] != '\0')
-	{
-		dst[cnt_i] = src[cnt_i];
-		cnt_i++;
-	}
-	return (cnt_i);
+	return ((i + 1) / 2);
 }
 
 int32_t Inner_API_KatSelfTest()
@@ -176,11 +179,13 @@ const BlockCIipher_TV bcTestVectors[] = {
 int32_t Inner_API_BlockCipher_SelfTest()
 {
     int32_t ret = SUCCESS;
-	uint8_t ciphertext[144] = { 0x00, };
-	uint8_t recovered[128] = { 0x00, };
+	uint8_t ciphertext[500];
+	uint8_t recovered[128];
 
     for (int32_t cnt_i = 0; cnt_i < sizeof(bcTestVectors) / sizeof(BlockCIipher_TV); cnt_i++)
 	{
+        YBCrypto_memset(ciphertext, 0x00, sizeof(ciphertext));
+        YBCrypto_memset(recovered, 0x00, sizeof(recovered));
 		//! Encrypt and Decrypt Test
         YBCrypto_BlockCipher(bcTestVectors[cnt_i].algo, bcTestVectors[cnt_i].mode,ENCRYPT,bcTestVectors[cnt_i].masterkey,bcTestVectors[cnt_i].key_bitlen,bcTestVectors[cnt_i].plaintext,bcTestVectors[cnt_i].pt_bytelen,bcTestVectors[cnt_i].IV,ciphertext);
 		if (memcmp(bcTestVectors[cnt_i].ciphertext_ct, ciphertext, bcTestVectors[cnt_i].pt_bytelen))
@@ -210,34 +215,34 @@ EXIT:
 //! HashFunction TestVecotr
 typedef struct _HashFunction_TV_{
     uint32_t algo;
-	uint8_t msg[512];
-	uint8_t hash[HASH_DIGEST];
+	uint8_t msg[1024];
+	uint8_t hash[HASH_DIGEST * 2];
 } HashFunction_TV;
 
 //! we use NIST FIPS 180-4 (Secure Hash Standard)'s SHA256 testvector 
 static const
 HashFunction_TV	HashTestVectors[] = 
 {
-	{
-        SHA256,
-        "abc",
-        "BA7816BF8F01CFEA414140DE5DAE2223B00361A396177A9CB410FF61F20015AD"
-    },
-    { 
-        SHA256,
-        "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
-        "248D6A61D20638B8E5C026930C3E6039A33CE45964FF2167F6ECEDD419DB06C1"
-    },
-    { 
-        SHA3,
-        "abc",
-        "3a985da74fe225b2045c172d6bd390bd855f086e3e9d525b46bfe24511431532"
-    },
+	// {
+    //     SHA256,
+    //     "abc",
+    //     "BA7816BF8F01CFEA414140DE5DAE2223B00361A396177A9CB410FF61F20015AD"
+    // },
+    // { 
+    //     SHA256,
+    //     "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
+    //     "248D6A61D20638B8E5C026930C3E6039A33CE45964FF2167F6ECEDD419DB06C1"
+    // },
     { 
         SHA3,
-        "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopqabcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
-        "60b43211e04797536da8f618eb1ab90e8b23f69aa74b71c2a14d275d064b9cfe"
+        "C42258FCAB7A69B4FF50B6A8D6EFA4B27225221EC4AF43BA30F22C2C90EC31887B693B22C77A6DA14C230755EB54",
+        "77339F53E0EA62425854142EAE9EA094C6DC5119EA2776880B6DE0EEC320DFDB"
     },
+    // { 
+    //     SHA3,
+    //     "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopqabcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
+    //     "60b43211e04797536da8f618eb1ab90e8b23f69aa74b71c2a14d275d064b9cfe"
+    // },
 };
 
 int32_t Inner_API_HashFunction_SelfTest()
@@ -245,10 +250,10 @@ int32_t Inner_API_HashFunction_SelfTest()
     int32_t ret = SUCCESS;
     
     uint8_t hased_digest[HASH_DIGEST];
-	uint8_t msg[1000];
+	uint8_t msg[400];
 	uint8_t tv_hash[HASH_DIGEST];
-	int32_t msglen = 0;
-	int32_t hashlen = 0;
+	int32_t msg_bytelen = 0x00;
+	int32_t hash_bytelen = 0x00;
 
 	for (int32_t cnt_i = 0; cnt_i < sizeof(HashTestVectors) / sizeof(HashFunction_TV); cnt_i++)
 	{
@@ -256,18 +261,31 @@ int32_t Inner_API_HashFunction_SelfTest()
         YBCrypto_memset(msg, 0x00, sizeof(msg));
         YBCrypto_memset(tv_hash, 0x00, sizeof(tv_hash));
 
-        msglen = string2hex(msg,HashTestVectors[cnt_i].msg);
-        hashlen = string2hex(tv_hash,HashTestVectors[cnt_i].hash);
+        msg_bytelen = asc2hex(msg,(char *)HashTestVectors[cnt_i].msg);
+        // msg_bytelen = asc2hex(msg,( char *)HashTestVectors[cnt_i].msg);
+        hash_bytelen = asc2hex(tv_hash,(char *)HashTestVectors[cnt_i].hash);
+        YBCrypto_Hash(HashTestVectors[cnt_i].algo, msg, msg_bytelen, hased_digest);
 
-		if (memcmp(hased_digest, tv_hash, HASH_DIGEST)) {
-			printf("\n");
-			printf("SHA-256_SelfTest Fail\n");
+        print_hex("msg", msg, msg_bytelen);
+        print_hex("tv_hash", tv_hash, hash_bytelen);
+        print_hex("our", hased_digest, hash_bytelen);
+		if (memcmp(hased_digest, tv_hash, HASH_DIGEST)) 
+        {
 			ret = FAIL_KATSELF_TEST;
 			goto EXIT;
 		}
 	}
 
 EXIT:
+    if(ret != SUCCESS)
+        fprintf(stdout, "=*Location : Inner_API_HashFunction_Se..=\n");
+
+    YBCrypto_memset(hased_digest, 0x00, sizeof(hased_digest));
+    YBCrypto_memset(msg, 0x00, sizeof(msg));
+    YBCrypto_memset(tv_hash, 0x00, sizeof(tv_hash));
+    msg_bytelen = 0x00;
+    hash_bytelen = 0x00;
+
     return ret;
 }
 int32_t Inner_API_HMAC_SelfTest()
@@ -362,30 +380,30 @@ int32_t Inner_API_CTR_DRBG_SelfTest()
 {
     int32_t ret = SUCCESS;
 
-    uint8_t entropyInput[256] = { 0 };
-	uint8_t entropyReseed[256] = { 0 };
-	uint8_t entropyinputPR1[256] = { 0 };
-	uint8_t entropyinputPR2[256] = { 0 };
-	uint8_t nonce1[128] = { 0 };
-	uint8_t pString[256] = { 0 };
-	uint8_t addInputReseed[256] = { 0 };
-	uint8_t addInput1[256] = { 0 };
-	uint8_t addInput2[256] = { 0 };
-	uint8_t rand1[256] = { 0 };
-	uint8_t rand2[256] = { 0 };
-	uint8_t KAT[512] = { 0 };
+    uint8_t entropyInput[256];
+	uint8_t entropyReseed[256];
+	uint8_t entropyinputPR1[256];
+	uint8_t entropyinputPR2[256];
+	uint8_t nonce1[128];
+	uint8_t pString[256];
+	uint8_t addInputReseed[256];
+	uint8_t addInput1[256];
+	uint8_t addInput2[256];
+	uint8_t rand1[256];
+	uint8_t rand2[256];
+	uint8_t KAT[512];
 
-	uint32_t entropyInputLen = 0;
-	uint32_t entropyReseedLen = 0;
-	uint32_t entropyinputPR1Len = 0;
-	uint32_t entropyinputPR2Len = 0;
-	uint32_t addInputReseedLen = 0;
-	uint32_t addInput1Len = 0;
-	uint32_t addInput2Len = 0;
-	uint32_t pStringLen = 0;
-	uint32_t nonce1Len = 0;
-	uint32_t KATLen = 0;
-	uint32_t returnedBitSize = 0;
+	uint32_t entropyInputLen = 0x00;
+	uint32_t entropyReseedLen = 0x00;
+	uint32_t entropyinputPR1Len = 0x00;
+	uint32_t entropyinputPR2Len = 0x00;
+	uint32_t addInputReseedLen = 0x00;
+	uint32_t addInput1Len = 0x00;
+	uint32_t addInput2Len = 0x00;
+	uint32_t pStringLen = 0x00;
+	uint32_t nonce1Len = 0x00;
+	uint32_t KATLen = 0x00;
+	uint32_t returnedBitSize = 0x00;
 
     //TODO it will be deleted
 	DRBGManager DRBG_DM = {0x00,};
@@ -434,5 +452,29 @@ END:
     if(ret != SUCCESS)
         fprintf(stdout, "=*Location : Inner_API_CTR_DRBG_SelfTe..=\n");
 	
+    YBCrypto_memset(entropyInput, 0x00, sizeof(entropyInput));
+    YBCrypto_memset(entropyReseed, 0x00, sizeof(entropyReseed));
+    YBCrypto_memset(entropyinputPR1, 0x00, sizeof(entropyinputPR1));
+    YBCrypto_memset(entropyinputPR2, 0x00, sizeof(entropyinputPR2));
+    YBCrypto_memset(nonce1, 0x00, sizeof(nonce1));
+    YBCrypto_memset(pString, 0x00, sizeof(pString));
+    YBCrypto_memset(addInputReseed, 0x00, sizeof(addInputReseed));
+    YBCrypto_memset(addInput1, 0x00, sizeof(addInput1));
+    YBCrypto_memset(addInput1, 0x00, sizeof(addInput1));
+    YBCrypto_memset(rand1, 0x00, sizeof(rand1));
+    YBCrypto_memset(rand2, 0x00, sizeof(rand2));
+    YBCrypto_memset(KAT, 0x00, sizeof(KAT));
+
+    entropyInputLen = 0x00;
+    entropyReseedLen = 0x00;
+    entropyinputPR1Len = 0x00;
+    entropyinputPR2Len = 0x00;
+    addInputReseedLen = 0x00;
+    addInput1Len = 0x00;
+    addInput2Len = 0x00;
+    pStringLen = 0x00;
+    nonce1Len = 0x00;
+    KATLen = 0x00;
+    returnedBitSize = 0x00;
     return ret;
 }

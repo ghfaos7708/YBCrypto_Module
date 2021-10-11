@@ -47,6 +47,7 @@ static int SHA256_compute(HashManager *c, uint8_t *data);
 
 int SHA256_init(HashManager *c)
 {
+    int ret = SUCCESS;
     YBCrypto_memset(c, 0x00, sizeof(HashManager));
     c->hash_function = SHA256;
 
@@ -64,12 +65,12 @@ int SHA256_init(HashManager *c)
     c->data[6] = 0x1F83D9ABUL;
     c->data[7] = 0x5BE0CD19UL;
 
-    return SUCCESS;
+    return ret;
 }
 
 int SHA256_update(HashManager *c, const uint8_t *msg, uint64_t msg_bytelen)
 {
-
+    int ret = SUCCESS;
     uint32_t n;
 
     if (c->l2 > SHA256_BLOCK_SIZE)
@@ -107,12 +108,12 @@ int SHA256_update(HashManager *c, const uint8_t *msg, uint64_t msg_bytelen)
             }
         }
     }
-    return SUCCESS;
+    return ret;
 }
 
 int SHA256_final(HashManager *c, uint8_t *out)
 {
-
+    int ret = SUCCESS;
     int i;
     int off = 0;
 
@@ -152,12 +153,12 @@ int SHA256_final(HashManager *c, uint8_t *out)
         (out + off)[1] = (uint8_t)(c->data[i] >> 16);
         (out + off)[0] = (uint8_t)(c->data[i] >> 24);
     }
-    return SUCCESS;
+    return ret;
 }
 
 static int SHA256_compute(HashManager *c, uint8_t *data)
 {
-
+    int ret = SUCCESS;
     int i;
     uint32_t data_temp[8], W[64];
     uint32_t temp, t1, temp2;
@@ -212,7 +213,7 @@ static int SHA256_compute(HashManager *c, uint8_t *data)
     c->data[6] += data_temp[6];
     c->data[7] += data_temp[7];
 
-    return SUCCESS;
+    return ret;
 }
 
 int SHA256_MD(unsigned char *in, int len, unsigned char *out)
@@ -401,6 +402,7 @@ void keccakf(uint8_t *state)
 
 int keccak_absorb(HashManager *c, uint8_t *input, int inLen, int rate, int capacity)
 {
+    int ret = SUCCESS;
     uint8_t *buf = input;
     int iLen = inLen;
     int rateInBytes = rate / 8;
@@ -445,11 +447,12 @@ int keccak_absorb(HashManager *c, uint8_t *input, int inLen, int rate, int capac
         c->end_offset = blockSize;
     }
 
-    return SHA3_OK;
+    return ret;
 }
 
 int keccak_squeeze(HashManager *c, uint8_t *output, int outLen, int rate, int suffix)
 {
+    int ret = SUCCESS;
     uint8_t *buf = output;
     int oLen = outLen;
     int rateInBytes = rate / 8;
@@ -477,7 +480,7 @@ int keccak_squeeze(HashManager *c, uint8_t *output, int outLen, int rate, int su
             keccakf(c->keccak_state);
     }
 
-    return SHA3_OK;
+    return ret;
 }
 
 int SHA3_init(HashManager *c)
@@ -506,7 +509,7 @@ int SHA3_update(HashManager *c, const uint8_t *msg, uint64_t msg_bytelen)
     msg_buffer = (uint8_t *)calloc(msg_bytelen,sizeof(uint8_t));
     memcpy(msg_buffer,msg,msg_bytelen);
 
-    return keccak_absorb(c,msg_buffer, msg_bytelen, c->keccakRate, c->keccakCapacity);
+    ret = keccak_absorb(c,msg_buffer, msg_bytelen, c->keccakRate, c->keccakCapacity);
 
     YBCrypto_memset(msg_buffer,0x00,msg_bytelen);
     if(msg_buffer) free(msg_buffer);
