@@ -377,4 +377,45 @@ EXIT:
     YBCrypto_memset(&HM, 0x00, sizeof(HashManager));
     return ret;
 }
+
+int32_t YBCrypto_Hash_Clear(void)
+{
+    int32_t ret = SUCCESS;
+	int32_t state =  Inner_API_GetState();
+
+    //! check Module sate and Conditional Test
+    if((state != YBCrtypto_CM_NOMAL_VM) && (state != YBCrtypto_CM_PRE_SELFTEST))
+	{
+		fprintf(stdout, "=========================================\n");
+		fprintf(stdout, "=     [YBCrypto V1.0 Not Nomal Mode]    =\n");
+		fprintf(stdout, "=*Location : YBCrypto_Hash_Clear        =\n");
+		fprintf(stdout, "=*Please reset Module(ReLoad)           =\n");
+        fprintf(stdout, "=*CM-> YBCrtypto_CM_CRITICAL_ERROR      =\n");
+		fprintf(stdout, "=========================================\n\n");
+
+		ret = FAIL_INVALID_MODULE_STATE;
+		YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
+		Destroy_YBCrypto();
+		return ret; 
+	}
+
+    if((state != YBCrtypto_CM_PRE_SELFTEST) && (algTestedFlag.isHashTested != SUCCESS))
+	{
+		fprintf(stdout, "=========================================\n");
+		fprintf(stdout, "= [YBCrypto V1.0 Not Performed KATtest] =\n");
+		fprintf(stdout, "=*Location : YBCrypto_Hash_Clear        =\n");
+		fprintf(stdout, "=*Please reset Module(ReLoad)           =\n");
+        fprintf(stdout, "=*CM-> YBCrtypto_CM_CRITICAL_ERROR      =\n");
+		fprintf(stdout, "=========================================\n\n");
+
+		ret = FAIL_NOT_PERFORM_KATSELFTEST;
+		YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
+		Destroy_YBCrypto();
+		return ret; 
+	}
+
+    //! Zero Manager
+    YBCrypto_memset(&HM, 0x00, sizeof(HashManager));
+    return ret;
+}
 //EOF

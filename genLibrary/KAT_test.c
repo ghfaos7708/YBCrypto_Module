@@ -290,7 +290,7 @@ int32_t Inner_API_HashFunction_SelfTest()
 			ret = FAIL_KATSELF_TEST;
 			goto EXIT;
 		}
-		
+
 		YBCrypto_Hash_Init(HashTestVectors[cnt_i].algo);
         YBCrypto_Hash_Update(msg, msg_bytelen);
         YBCrypto_Hash_Final(hased_digest);
@@ -373,7 +373,15 @@ int32_t Inner_API_HMAC_SelfTest()
         mac_bytelen = asc2hex(tv_mac,(char *)hmactestvector[cnt_i].mac);
 
         YBCrypto_HMAC(hmactestvector[cnt_i].algo, key, key_bytelen, msg, msg_bytelen, mac_digest);
+		if (memcmp(mac_digest, tv_mac, HMAC_DIGEST)) 
+        {
+			ret = FAIL_KATSELF_TEST;
+			goto EXIT;
+		}
 
+        YBCrypto_HMAC_Init(hmactestvector[cnt_i].algo, key, key_bytelen);
+        YBCrypto_HMAC_Update(msg, msg_bytelen);
+        YBCrypto_HMAC_Final(mac_digest);
 		if (memcmp(mac_digest, tv_mac, HMAC_DIGEST)) 
         {
 			ret = FAIL_KATSELF_TEST;

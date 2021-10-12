@@ -130,6 +130,7 @@ typedef struct YBCrypto_Hash_manager_st
 #define HMAC_SHA256_KEYSIZE 64
 #define HMAC_SHA3_KEYSIZE 136
 #define HMAC_DIGEST 32
+#define HM_MAX_HMAC_LEN 0x1000000000000000UL //2^60 = 2^63 / 8
 typedef struct YBCrypto_Hmac_manager_st
 {
     HashManager hash_manger;
@@ -173,14 +174,12 @@ void YBCrypto_ModuleInfo(void); //*done
 int32_t YBCrypto_GetState(void); //*done
 int32_t YBCrypto_PreSelfTest(void); //*done
 
-
 //! YBCrypto BlockCipher API ////////////////////////////////////////////////////////
 int32_t YBCrypto_BlockCipher(uint32_t ALG, int32_t MODE, int32_t direct, const uint8_t *user_key, uint32_t key_bitlen, const uint8_t *in, uint64_t in_byteLen, const uint8_t *iv, uint8_t *out);
 int32_t YBCrypto_BlockCipher_Init(uint32_t ALG, int32_t MODE, int32_t direct, const uint8_t *user_key, uint32_t key_bitlen, const uint8_t *iv);
 int32_t YBCrypto_BlockCipher_Update(const uint8_t *in, uint64_t in_byteLen, uint8_t *out, uint64_t *out_byteLen);
 int32_t YBCrypto_BlockCipher_Final(uint8_t *out, uint32_t *pad_bytelen);
 int32_t YBCrypto_BlockCipher_Clear(void);
-
 
 //! YBCrypto HashFunction API ///////////////////////////////////////////////////////
 int32_t YBCrypto_Hash(uint32_t ALG, const uint8_t *msg, uint64_t msg_byteLen, uint8_t *md);
