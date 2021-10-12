@@ -10,6 +10,8 @@
 #include "hmac.h"
 #include "ctr_drbg.h"
 
+//TODO 10/13 --> CTR_DRBG 구성 및 entropy 함수 추가하기
+
 typedef unsigned char u8;
 
 int asc2hex(u8* dst, char* src);
@@ -21,8 +23,8 @@ void _CTR_DRBG_ARIA_KAT_SelfTest();
 int main()
 {	
 	Load_YBCrypto();
-	YBCrypto_PreSelfTest();
-	YBCrypto_ModuleInfo();
+	// YBCrypto_PreSelfTest();
+	// YBCrypto_ModuleInfo();
 	// Destroy_YBCrypto();
 	// Cipher_Test();
 	// _CTR_DRBG_ARIA_KAT_SelfTest();
