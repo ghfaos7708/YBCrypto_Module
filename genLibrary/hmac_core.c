@@ -57,7 +57,7 @@ int HMAC_update(HMACManager *c, const uint8_t *msg, uint64_t msg_bytelen)
     }
     else if (c->algo == SHA3)
     {
-         for (cnt_i = 0; cnt_i < HMAC_SHA3_KEYSIZE; cnt_i++)
+        for (cnt_i = 0; cnt_i < HMAC_SHA3_KEYSIZE; cnt_i++)
         {
             K1[cnt_i] = IPAD ^ c->key[cnt_i];
         }
@@ -117,7 +117,7 @@ int HMAC_final(HMACManager *c, uint8_t *mac)
     }
     else if (c->algo == SHA3)
     {
-         for (cnt_i = 0; cnt_i < HMAC_SHA3_KEYSIZE; cnt_i++)
+        for (cnt_i = 0; cnt_i < HMAC_SHA3_KEYSIZE; cnt_i++)
         {
             K2[cnt_i] = OPAD ^ c->key[cnt_i];
         }

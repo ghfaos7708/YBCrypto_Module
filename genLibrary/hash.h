@@ -19,4 +19,3 @@ int SHA3_MD(unsigned char *in, int len, unsigned char *out);
 
 #endif
 //EOF
-                                                                 

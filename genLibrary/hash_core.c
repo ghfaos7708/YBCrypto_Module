@@ -506,14 +506,15 @@ int SHA3_update(HashManager *c, const uint8_t *msg, uint64_t msg_bytelen)
     int ret = SUCCESS;
 
     uint8_t *msg_buffer = NULL;
-    msg_buffer = (uint8_t *)calloc(msg_bytelen,sizeof(uint8_t));
-    memcpy(msg_buffer,msg,msg_bytelen);
+    msg_buffer = (uint8_t *)calloc(msg_bytelen, sizeof(uint8_t));
+    memcpy(msg_buffer, msg, msg_bytelen);
 
-    ret = keccak_absorb(c,msg_buffer, msg_bytelen, c->keccakRate, c->keccakCapacity);
+    ret = keccak_absorb(c, msg_buffer, msg_bytelen, c->keccakRate, c->keccakCapacity);
 
-    YBCrypto_memset(msg_buffer,0x00,msg_bytelen);
-    if(msg_buffer) free(msg_buffer);
-    
+    YBCrypto_memset(msg_buffer, 0x00, msg_bytelen);
+    if (msg_buffer)
+        free(msg_buffer);
+
     return ret;
 }
 
@@ -521,7 +522,7 @@ int SHA3_final(HashManager *c, uint8_t *md)
 {
     int ret = SUCCESS;
 
-    ret = keccak_squeeze(c, md, KECCAK_SHA3_256/8, c->keccakRate, c->keccakSuffix);
+    ret = keccak_squeeze(c, md, KECCAK_SHA3_256 / 8, c->keccakRate, c->keccakSuffix);
 
     YBCrypto_memset(c, 0x00, sizeof(HashManager));
 

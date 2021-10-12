@@ -30,19 +30,19 @@ static int32_t Inner_API_PreSelfTest(void)
 	//TODO KAT Test
 	ret = Inner_API_KatSelfTest();
 
-	if(ret != SUCCESS)
+	if (ret != SUCCESS)
 	{
 		fprintf(stdout, "=*Location : Inner_API_PreSelfTest(KAT) =\n");
 		goto EXIT;
 	}
 	//TODO Entropy Test
-	if(ret != SUCCESS)
+	if (ret != SUCCESS)
 	{
 		fprintf(stdout, "=*Location : Inner_API_PreSelfTest(Ent) =\n");
 		goto EXIT;
 	}
 	//TODO Integrity Test
-	if(ret != SUCCESS)
+	if (ret != SUCCESS)
 	{
 		fprintf(stdout, "=*Location : Inner_API_PreSelfTest(MAC) =\n");
 		goto EXIT;
@@ -55,9 +55,9 @@ EXIT:
 int32_t YBCrypto_PreSelfTest(void)
 {
 	int32_t ret = SUCCESS;
-	int32_t state =  Inner_API_GetState();
+	int32_t state = Inner_API_GetState();
 
-	if(state != YBCrtypto_CM_NOMAL_VM)
+	if (state != YBCrtypto_CM_NOMAL_VM)
 	{
 		fprintf(stdout, "=========================================\n");
 		fprintf(stdout, "=     [YBCrypto V1.0 Not Nomal Mode]    =\n");
@@ -68,7 +68,7 @@ int32_t YBCrypto_PreSelfTest(void)
 		ret = FAIL_INVALID_MODULE_STATE;
 		YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
 		Destroy_YBCrypto();
-		return FAIL_INVALID_MODULE_STATE; 
+		return FAIL_INVALID_MODULE_STATE;
 	}
 
 	fprintf(stdout, "=========================================\n");
@@ -79,7 +79,7 @@ int32_t YBCrypto_PreSelfTest(void)
 	YBCrypto_ChangeState(YBCrtypto_CM_PRE_SELFTEST);
 	ret = Inner_API_PreSelfTest();
 
-	if(ret != SUCCESS)
+	if (ret != SUCCESS)
 	{
 		fprintf(stdout, "=*Location : YBCrypto_PreSelfTest       =\n");
 		fprintf(stdout, "=*FAIL : PreSelfTest                    =\n");
@@ -100,9 +100,9 @@ int32_t YBCrypto_PreSelfTest(void)
 
 int32_t YBCrypto_GetState(void)
 {
-	int32_t state =  Inner_API_GetState();
+	int32_t state = Inner_API_GetState();
 
-	if(state == YBCrtypto_CM_CRITICAL_ERROR)
+	if (state == YBCrtypto_CM_CRITICAL_ERROR)
 	{
 		fprintf(stdout, "=========================================\n");
 		fprintf(stdout, "= [YBCrypto V1.0 Detact Critical ERROR] =\n");
@@ -110,7 +110,7 @@ int32_t YBCrypto_GetState(void)
 		fprintf(stdout, "=*Please reset Module(ReLoad)           =\n");
 		fprintf(stdout, "=========================================\n\n");
 	}
-	
+
 	return state;
 }
 
@@ -170,14 +170,14 @@ void YBCrypto_memset(void *pointer, int32_t value, int32_t size)
 
 void YBCrypto_ModuleInfo(void)
 {
-	if(Inner_API_GetState() != YBCrtypto_CM_NOMAL_VM)
+	if (Inner_API_GetState() != YBCrtypto_CM_NOMAL_VM)
 	{
 		fprintf(stdout, "=========================================\n");
 		fprintf(stdout, "=     [YBCrypto V1.0 Not Nomal Mode]    =\n");
 		fprintf(stdout, "=*Location : Inner_API_GetState         =\n");
 		fprintf(stdout, "=*Please reset Module(ReLoad)           =\n");
 		fprintf(stdout, "=========================================\n\n");
-		return ; 
+		return;
 	}
 
 	fprintf(stdout, "=========================================\n");
@@ -195,9 +195,9 @@ void Load_YBCrypto(void)
 	int32_t ret = SUCCESS;
 
 #ifdef _WIN64
-		system("cls");
+	system("cls");
 #else //* MAC OS and Linux
-		system("clear");
+	system("clear");
 #endif
 	YBCrypto_ChangeState(YBCrtypto_CM_LOAD);
 	YBCrypto_ChangeState(YBCrtypto_CM_PRE_SELFTEST);
@@ -259,9 +259,9 @@ void Destroy_YBCrypto(void)
 	{
 
 #ifdef _WIN64
-	system("cls");
+		system("cls");
 #else //* MAC OS and Linux
-	system("clear");
+		system("clear");
 #endif
 		fprintf(stdout, "=========================================\n");
 		fprintf(stdout, "=     [Destroy YBCryptoV1.0........]    =\n");

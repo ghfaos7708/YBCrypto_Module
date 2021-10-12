@@ -390,7 +390,6 @@ int32_t CTR_Update(CipherManager *c, const uint8_t *in, uint64_t in_byteLen, uin
         c->remained_len = 0;
         count_loop++;
         c->encrypted_len += BC_MAX_BLOCK_SIZE;
-
     }
     memcpy(c->buf + c->remained_len, in + Update_index, Update_bytelen);
     c->remained_len = Update_bytelen;

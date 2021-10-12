@@ -193,7 +193,7 @@ static int32_t CTR_DRBG_Update(uint8_t *provided_data, DRBGManager *DM)
     int32_t cnt_i = 0x00;
     int32_t ret = SUCCESS;
 
-    YBCrypto_memset(temp,0x00,MAX_SEEDLEN);
+    YBCrypto_memset(temp, 0x00, MAX_SEEDLEN);
     if (provided_data == NULL)
     {
         ret = FAIL_INVALID_INPUT_DATA;
@@ -215,9 +215,7 @@ static int32_t CTR_DRBG_Update(uint8_t *provided_data, DRBGManager *DM)
         temp[cnt_i] ^= provided_data[cnt_i];
     }
 
-
     memcpy(DM->Key, temp, DM->Key_bytelen);
-
 
     ptr = temp;
     memcpy(DM->V, ptr + (DM->seedlen) - (DM->Vlen), DM->Vlen);
@@ -552,7 +550,8 @@ EXIT:
     {
         YBCrypto_memset(DM, 0x00, sizeof(DRBGManager));
     }
-    if (temp)   free(temp);
+    if (temp)
+        free(temp);
     YBCrypto_memset(temp, 0x00, templen);
     YBCrypto_memset(addtional_input_for_seed, 0x00, MAX_SEEDLEN);
 
