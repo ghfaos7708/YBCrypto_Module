@@ -32,20 +32,84 @@ static int32_t Inner_API_PreSelfTest(void)
 
 	if(ret != SUCCESS)
 	{
-		fprintf(stdout, "=*Location : Inner_API_PreSelfTest      =\n");
+		fprintf(stdout, "=*Location : Inner_API_PreSelfTest(KAT) =\n");
 		goto EXIT;
 	}
 	//TODO Entropy Test
+	if(ret != SUCCESS)
+	{
+		fprintf(stdout, "=*Location : Inner_API_PreSelfTest(Ent) =\n");
+		goto EXIT;
+	}
 	//TODO Integrity Test
+	if(ret != SUCCESS)
+	{
+		fprintf(stdout, "=*Location : Inner_API_PreSelfTest(MAC) =\n");
+		goto EXIT;
+	}
 
 EXIT:
 	return ret;
+}
 
+int32_t YBCrypto_PreSelfTest(void)
+{
+	int32_t ret = SUCCESS;
+	int32_t state =  Inner_API_GetState();
+
+	if(state != YBCrtypto_CM_NOMAL_VM)
+	{
+		fprintf(stdout, "=========================================\n");
+		fprintf(stdout, "=     [YBCrypto V1.0 Not Nomal Mode]    =\n");
+		fprintf(stdout, "=*Location : YBCrypto_PreSelfTest       =\n");
+		fprintf(stdout, "=*Please reset Module(ReLoad)           =\n");
+		fprintf(stdout, "=========================================\n\n");
+
+		ret = FAIL_INVALID_MODULE_STATE;
+		YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
+		Destroy_YBCrypto();
+		return FAIL_INVALID_MODULE_STATE; 
+	}
+
+	fprintf(stdout, "=========================================\n");
+	fprintf(stdout, "=    [YBCrypto V1.0 PreSelf Testing]    =\n");
+	fprintf(stdout, "=*CM-> YBCrtypto_CM_PRE_SELFTEST        =\n");
+	fprintf(stdout, "=*PreSelf_Testing.......................=\n");
+
+	ret = Inner_API_PreSelfTest();
+
+	if(ret != SUCCESS)
+	{
+		fprintf(stdout, "=*Location : YBCrypto_PreSelfTest       =\n");
+		fprintf(stdout, "=*FAIL : PreSelfTest                    =\n");
+		fprintf(stdout, "=*CM-> YBCrtypto_CM_CRITICAL_ERROR      =\n");
+		fprintf(stdout, "=========================================\n");
+		YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
+		Destroy_YBCrypto();
+		return ret;
+	}
+
+	fprintf(stdout, "=*--> SUCESS!!!!!!                      =\n");
+	fprintf(stdout, "=*CM-> YBCrtypto_CM_NOMAL_VM            =\n");
+	fprintf(stdout, "=========================================\n");
+
+	return ret;
 }
 
 int32_t YBCrypto_GetState(void)
 {
-	return Inner_API_GetState();
+	int32_t state =  Inner_API_GetState();
+
+	if(state == YBCrtypto_CM_CRITICAL_ERROR)
+	{
+		fprintf(stdout, "=========================================\n");
+		fprintf(stdout, "= [YBCrypto V1.0 Detact Critical ERROR] =\n");
+		fprintf(stdout, "=*CM-> YBCrtypto_CM_CRITICAL_ERROR      =\n");
+		fprintf(stdout, "=*Please reset Module(ReLoad)           =\n");
+		fprintf(stdout, "=========================================\n\n");
+	}
+	
+	return state;
 }
 
 void YBCrypto_ChangeState(int32_t newState)
@@ -103,8 +167,23 @@ void YBCrypto_memset(void *pointer, int32_t value, int32_t size)
 
 void YBCrypto_ModuleInfo(void)
 {
-	fprintf(stdout, "YBCrypto V1.0\n");
-	fprintf(stdout, "This library is made by YoungBeom Kim of Kookmin_University[COALAB]\n");
+	if(Inner_API_GetState() != YBCrtypto_CM_NOMAL_VM)
+	{
+		fprintf(stdout, "=========================================\n");
+		fprintf(stdout, "=     [YBCrypto V1.0 Not Nomal Mode]    =\n");
+		fprintf(stdout, "=*Location : Inner_API_GetState         =\n");
+		fprintf(stdout, "=*Please reset Module(ReLoad)           =\n");
+		fprintf(stdout, "=========================================\n\n");
+		return ; 
+	}
+
+	fprintf(stdout, "=========================================\n");
+	fprintf(stdout, "=*Module name = YBCrypto V1.0           =\n");
+	fprintf(stdout, "=*Developer   = YoungBeom Kim           =\n");
+	fprintf(stdout, "=*Date        = 2021. 10. 10.           =\n");
+	fprintf(stdout, "=*Location    = Kookmin_Universiy       =\n");
+	fprintf(stdout, "=*git         = github.com/Youngbeom94  =\n");
+	fprintf(stdout, "=========================================\n\n");
 }
 
 //! constructor model
@@ -114,7 +193,7 @@ void Load_YBCrypto(void)
 
 #ifdef _WIN64
 		system("cls");
-#else
+#else //* MAC OS and Linux
 		system("clear");
 #endif
 	YBCrypto_ChangeState(YBCrtypto_CM_LOAD);
@@ -122,7 +201,7 @@ void Load_YBCrypto(void)
 	fprintf(stdout, "=========================================\n");
 	fprintf(stdout, "=       [YBCrypto V1.0 Load Success]    =\n");
 	fprintf(stdout, "=*CM-> YBCrtypto_CM_PRE_SELFTEST        =\n");
-	fprintf(stdout, "=*PreSelf Testing......                 =\n");
+	fprintf(stdout, "=*PreSelf Module Testing......          =\n");
 	ret = Inner_API_PreSelfTest();
 
 	if (ret != SUCCESS)
@@ -144,10 +223,9 @@ void Load_YBCrypto(void)
 		fprintf(stdout, "=*--> CTR_DRBG    : ARIA, AES           =\n");
 		fprintf(stdout, "=*[Ready to Start YBCrypto V1.0]        =\n");
 		fprintf(stdout, "=*CM-> YBCrtypto_CM_NOMAL_VM            =\n");
-		fprintf(stdout, "=====================[made by YoungBeom]=\n\n\n");
+		fprintf(stdout, "=====================[made by YoungBeom]=\n\n");
 		YBCrypto_ChangeState(YBCrtypto_CM_NOMAL_VM);
 	}
-
 	return;
 
 EXIT:
@@ -163,28 +241,29 @@ void Destroy_YBCrypto(void)
 	YBCrypto_memset(&MM, 0x00, sizeof(HMACManager));
 	YBCrypto_memset(&DM, 0x00, sizeof(DRBGManager));
 
-	if (YBCrypto_GetState() == YBCrtypto_CM_CRITICAL_ERROR)
+	if (Inner_API_GetState() == YBCrtypto_CM_CRITICAL_ERROR)
 	{
 		fprintf(stdout, "=========================================\n");
 		fprintf(stdout, "=     [Destroy YBCryptoV1.0........]    =\n");
 		fprintf(stdout, "=*        [Critical ERROR ISSUE]       *=\n");
+		fprintf(stdout, "=*-->Not Nomal Module State     [OR]    =\n");
 		fprintf(stdout, "=*-->Entropy Test Fail          [OR]    =\n");
 		fprintf(stdout, "=*-->KAT Test Fail              [OR]    =\n");
 		fprintf(stdout, "=*-->Integrity Test Fail        [OR]    =\n");
-		fprintf(stdout, "==============[Please Contact YoungBeom]=\n\n\n");
+		fprintf(stdout, "==============[Please Contact YoungBeom]=\n\n");
 	}
 	else
 	{
 
 #ifdef _WIN64
 	system("cls");
-#else
+#else //* MAC OS and Linux
 	system("clear");
 #endif
 		fprintf(stdout, "=========================================\n");
 		fprintf(stdout, "=     [Destroy YBCryptoV1.0........]    =\n");
 		fprintf(stdout, "=*              Good Bye~!!            *=\n");
-		fprintf(stdout, "=====================[made by YoungBeom]=\n\n\n");
+		fprintf(stdout, "=====================[made by YoungBeom]=\n\n");
 	}
 	YBCrypto_ChangeState(YBCrtypto_CM_EXIT);
 

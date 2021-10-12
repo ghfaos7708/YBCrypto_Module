@@ -128,6 +128,7 @@ typedef struct YBCrypto_Hash_manager_st
 //! Hash Function ////////////////////////////////////////////////////////////////
 #define HMAC_SHA256_KEYSIZE 64
 #define HMAC_SHA3_KEYSIZE 136
+#define HMAC_DIGEST 32
 typedef struct YBCrypto_Hmac_manager_st
 {
     HashManager hash_manger;
@@ -158,18 +159,23 @@ typedef struct YBCrypto_CTR_DRBG_manager_st
     uint32_t prediction_resistance_flag; 
 } DRBGManager;
 
-//! YBCrypto common API /////////////////////////////////////////////////////////////
-void YBCrypto_memset(void *pointer, int32_t value, int32_t size);
-void YBCrypto_ModuleInfo(void);
-void YBCrypto_ChangeState(int32_t newState);
-int32_t YBCrypto_GetState(void);
-
-//TODO 작업용
+//! constructor & destructor of YBCrypto Module (not API)
 void Load_YBCrypto(void);
 void Destroy_YBCrypto(void);
+
+//! YBCrypto Inner API /////////////////////////////////////////////////////////////
+void YBCrypto_memset(void *pointer, int32_t value, int32_t size);
+void YBCrypto_ChangeState(int32_t newState);
+
+//! YBCrypto open API /////////////////////////////////////////////////////////////
+void YBCrypto_ModuleInfo(void); //*done
+int32_t YBCrypto_GetState(void); //*done
+int32_t YBCrypto_PreSelfTest(void); //*done
+
 
 //! YBCrypto BlockCipher API ////////////////////////////////////////////////////////
 int32_t YBCrypto_BlockCipher(uint32_t ALG, int32_t MODE, int32_t direct, const uint8_t *user_key, uint32_t key_bitlen, const uint8_t *in, uint64_t in_byteLen, const uint8_t *iv, uint8_t *out);
 int32_t YBCrypto_Hash(uint32_t ALG, const uint8_t *msg, uint64_t in_byteLen, uint8_t *md);
+int32_t YBCrypto_HMAC(uint32_t ALG, const uint8_t *key, uint32_t key_bytelen, const uint8_t *msg, uint64_t msg_byteLen, uint8_t *mac);
 #endif
 //EOF

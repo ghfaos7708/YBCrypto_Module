@@ -1,7 +1,7 @@
 #include "hash.h"
 #include "hmac.h"
 
-int HMAC_init(HMACManager *c, int32_t ALG, const uint8_t *key, uint32_t key_bytelen)
+int HMAC_init(HMACManager *c, uint32_t ALG, const uint8_t *key, uint32_t key_bytelen)
 {
     int ret = SUCCESS;
     YBCrypto_memset(c, 0x00, sizeof(HMACManager));

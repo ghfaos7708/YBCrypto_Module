@@ -3,8 +3,6 @@
 
 //TODO header fix
 #include "ctr_drbg.h"
-#include "hash.h"
-#include "hmac.h"
 
 extern IS_ALG_TESTED algTestedFlag;
 extern CipherManager CM;
@@ -26,30 +24,43 @@ static void print_hex( char* valName,  uint8_t* data,  uint32_t dataByteLen)
 	printf("\n\n");
 }
 
+static int32_t string2hex(uint8_t* dst, char* src)
+{
+	int32_t cnt_i = 0;
+
+	while (src[cnt_i] != '\0')
+	{
+		dst[cnt_i] = src[cnt_i];
+
+		cnt_i++;
+	}
+	return (cnt_i);
+}
+
 static int32_t asc2hex(uint8_t* dst, char* src)
 {
 	uint8_t temp = 0x00;
-	int i = 0;
+	int32_t cnt_i = 0;
 
-	while (src[i] != 0x00)
+	while (src[cnt_i] != 0x00)
 	{
 		temp = 0x00;
 
-		if ((src[i] >= 0x30) && (src[i] <= 0x39))
-			temp = src[i] - '0';
-		else if ((src[i] >= 0x41) && (src[i] <= 0x5A))
-			temp = src[i] - 'A' + 10;
-		else if ((src[i] >= 0x61) && (src[i] <= 0x7A))
-			temp = src[i] - 'a' + 10;
+		if ((src[cnt_i] >= 0x30) && (src[cnt_i] <= 0x39))
+			temp = src[cnt_i] - '0';
+		else if ((src[cnt_i] >= 0x41) && (src[cnt_i] <= 0x5A))
+			temp = src[cnt_i] - 'A' + 10;
+		else if ((src[cnt_i] >= 0x61) && (src[cnt_i] <= 0x7A))
+			temp = src[cnt_i] - 'a' + 10;
 		else
 			temp = 0x00;
 
-		(i & 1) ? (dst[i >> 1] ^= temp & 0x0F) : (dst[i >> 1] = 0, dst[i >> 1] = temp << 4);
+		(cnt_i & 1) ? (dst[cnt_i >> 1] ^= temp & 0x0F) : (dst[cnt_i >> 1] = 0, dst[cnt_i >> 1] = temp << 4);
 
-		i++;
+		cnt_i++;
 	}
 
-	return ((i + 1) / 2);
+	return ((cnt_i + 1) / 2);
 }
 
 int32_t Inner_API_KatSelfTest()
@@ -215,34 +226,34 @@ EXIT:
 //! HashFunction TestVecotr
 typedef struct _HashFunction_TV_{
     uint32_t algo;
-	uint8_t msg[1024];
-	uint8_t hash[HASH_DIGEST * 2];
+	uint8_t msg[512];
+	uint8_t hash[HASH_DIGEST * 4];
 } HashFunction_TV;
 
 //! we use NIST FIPS 180-4 (Secure Hash Standard)'s SHA256 testvector 
 static const
 HashFunction_TV	HashTestVectors[] = 
 {
-	// {
-    //     SHA256,
-    //     "abc",
-    //     "BA7816BF8F01CFEA414140DE5DAE2223B00361A396177A9CB410FF61F20015AD"
-    // },
-    // { 
-    //     SHA256,
-    //     "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
-    //     "248D6A61D20638B8E5C026930C3E6039A33CE45964FF2167F6ECEDD419DB06C1"
-    // },
+	{
+        SHA256,
+        "abc",
+        "BA7816BF8F01CFEA414140DE5DAE2223B00361A396177A9CB410FF61F20015AD"
+    },
+    { 
+        SHA256,
+        "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
+        "248D6A61D20638B8E5C026930C3E6039A33CE45964FF2167F6ECEDD419DB06C1"
+    },
     { 
         SHA3,
-        "C42258FCAB7A69B4FF50B6A8D6EFA4B27225221EC4AF43BA30F22C2C90EC31887B693B22C77A6DA14C230755EB54",
-        "77339F53E0EA62425854142EAE9EA094C6DC5119EA2776880B6DE0EEC320DFDB"
+        "abc",
+        "3a985da74fe225b2045c172d6bd390bd855f086e3e9d525b46bfe24511431532"
     },
-    // { 
-    //     SHA3,
-    //     "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopqabcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
-    //     "60b43211e04797536da8f618eb1ab90e8b23f69aa74b71c2a14d275d064b9cfe"
-    // },
+    { 
+        SHA3,
+        "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopqabcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
+        "60b43211e04797536da8f618eb1ab90e8b23f69aa74b71c2a14d275d064b9cfe"
+    },
 };
 
 int32_t Inner_API_HashFunction_SelfTest()
@@ -261,15 +272,91 @@ int32_t Inner_API_HashFunction_SelfTest()
         YBCrypto_memset(msg, 0x00, sizeof(msg));
         YBCrypto_memset(tv_hash, 0x00, sizeof(tv_hash));
 
-        msg_bytelen = asc2hex(msg,(char *)HashTestVectors[cnt_i].msg);
-        // msg_bytelen = asc2hex(msg,( char *)HashTestVectors[cnt_i].msg);
+		//! be Careful! we use string2hex
+        msg_bytelen = string2hex(msg,(char *)HashTestVectors[cnt_i].msg);
         hash_bytelen = asc2hex(tv_hash,(char *)HashTestVectors[cnt_i].hash);
         YBCrypto_Hash(HashTestVectors[cnt_i].algo, msg, msg_bytelen, hased_digest);
 
-        print_hex("msg", msg, msg_bytelen);
-        print_hex("tv_hash", tv_hash, hash_bytelen);
-        print_hex("our", hased_digest, hash_bytelen);
 		if (memcmp(hased_digest, tv_hash, HASH_DIGEST)) 
+        {
+			printf("alg = %08x",HashTestVectors[cnt_i].algo);
+        	print_hex("msg", msg, msg_bytelen);
+        	print_hex("tv_hash", tv_hash, hash_bytelen);
+        	print_hex("our", hased_digest, hash_bytelen);
+			ret = FAIL_KATSELF_TEST;
+			goto EXIT;
+		}
+	}
+
+EXIT:
+    if(ret != SUCCESS)	fprintf(stdout, "=*Location : Inner_API_HashFunction_Se..=\n");
+
+	YBCrypto_memset(hased_digest, 0x00, sizeof(hased_digest));
+    YBCrypto_memset(msg, 0x00, sizeof(msg));
+    YBCrypto_memset(tv_hash, 0x00, sizeof(tv_hash));
+    msg_bytelen = 0x00;
+    hash_bytelen = 0x00;
+    return ret;
+}
+
+//! HMAC TestVecotr
+typedef struct _HMAC_TV_{
+	uint32_t algo;
+	uint8_t key[1000];
+	uint8_t msg[1000];
+	uint8_t mac[256];
+	int32_t	macLength;
+} HMAC_TV;
+
+//! we use TTAE.IF-RFC6234 and TTAK.KO-12.0333-Part2's HMAC testvector 
+static const
+HMAC_TV	hmactestvector[] = {
+
+	{
+	SHA256,
+	"E4D47A95CF75B4CFAA85DF7D4FC9BC3099FF1E3E19C440C20AB55BE487D5785BFC2F8330DBBCA2C49086C514B60E7D3C8BEB113AA1B5CFF5D721A07E886DDF9502FF6B6F3A49FBB6BEEFB2D2EA2CF4675F72771EB1509DA9609901010AC34FF2DE8D5ADA54E468AE1B08D03D53EBC8B9FDDA7873B05E53E68D65A6F7759D717B",
+	"792177FA915791B2911847DF5A12A13A4D6B3BC006A798B446CCB8E730C4ED37B902EA565A691DCD07693F40656B29F3386FE98D1AF3151C73175F5AA5006A2F877ADC7615E1B5046641DFE6DEBC05EBA42CA963560A7125FC8FC2D73B189069CCCF75E32C88006194E94F5B2BCEE02A7BEBA4C821B455D8C9790AE65AD609EF",
+	"08201FC6662D612BA034903F15494CFC9F2ACC8BD2E7D8D07929FAB886F934F5",32	//!done
+	},
+
+	{
+	SHA3,
+	"714F22D8D7654B5B9690D1EDAC26C72CD34BC90FB15DD46E4F8F5AC5CCD3963553FE1ECB4A26B705CC4F6C925A47E25ACDCFE6BE8FFB48210BDCECA7625C1E3C606826D9AE551C02497CFE94322800BD68B3234C13EB092B02BA082957077DFD81D763886BB8245BF35FAE799E90CA5E8A3EA940A4F4C0941A73D7D4149D5C809F91FC63E9187517B440A5CB0546E7441CB9A022A9DD15653D4E802FFFE562CBA0DF1AEF913CB73E73660B11CF130077076C307B8C6FAFA552922BC381A938E86E09E5B6C9EE93D9181A07D463BFBD00319F7FD1B472375C4188021603AF85DFEF57843FFAF4B0EF8AA4C19B2B12C5E6849AB8AF89AE5492F2782AB2EBC0F2B60D1120128D17B888B34C62EE8ED4C131",
+	"E7A4019A73EAAF504CA9CE1FA2A42777AE7EE0B8E81F50AC7A5A1255F4CC58EA4107821CDAF0F09D396514E39123CB2ABCE7EDB875D42264C715F859C5C333187C0965BC2686BE82A1F224881F0586D51E946E9A9BFED6B782C63D816A81FAC37FF3CF03BF75C1066A992796B3110282BCCD8CE7C16414AE94B5085649CE54F3",
+	"0E6753BD2A770D8B29F08C646C97BDB2825ADEF660774456EC931382C689BFB3",32	//!done
+	},
+
+};
+
+
+
+int32_t Inner_API_HMAC_SelfTest()
+{
+    int32_t ret = SUCCESS;
+    
+	uint8_t key[1000];
+	uint8_t msg[1000];
+	uint8_t tv_mac[HMAC_DIGEST];
+    uint8_t mac_digest[HMAC_DIGEST];
+	int32_t key_bytelen = 0x00;
+	int32_t msg_bytelen = 0x00;
+	int32_t mac_bytelen = 0x00;
+
+	for (int32_t cnt_i = 0; cnt_i < sizeof(hmactestvector) / sizeof(HMAC_TV); cnt_i++)
+	{
+        YBCrypto_memset(key, 0x00, sizeof(key));
+        YBCrypto_memset(msg, 0x00, sizeof(msg));
+        YBCrypto_memset(tv_mac, 0x00, sizeof(tv_mac));
+        YBCrypto_memset(mac_digest, 0x00, sizeof(mac_digest));
+
+		//! be Careful! we use asc2hex
+        key_bytelen = asc2hex(key,(char *)hmactestvector[cnt_i].key);
+        msg_bytelen = asc2hex(msg,(char *)hmactestvector[cnt_i].msg);
+        mac_bytelen = asc2hex(tv_mac,(char *)hmactestvector[cnt_i].mac);
+
+        YBCrypto_HMAC(hmactestvector[cnt_i].algo, key, key_bytelen, msg, msg_bytelen, mac_digest);
+
+		if (memcmp(mac_digest, tv_mac, HMAC_DIGEST)) 
         {
 			ret = FAIL_KATSELF_TEST;
 			goto EXIT;
@@ -277,20 +364,15 @@ int32_t Inner_API_HashFunction_SelfTest()
 	}
 
 EXIT:
-    if(ret != SUCCESS)
-        fprintf(stdout, "=*Location : Inner_API_HashFunction_Se..=\n");
+    if(ret != SUCCESS)	fprintf(stdout, "=*Location : Inner_API_HMAC_SelfTest    =\n");
 
-    YBCrypto_memset(hased_digest, 0x00, sizeof(hased_digest));
+	YBCrypto_memset(key, 0x00, sizeof(key));
     YBCrypto_memset(msg, 0x00, sizeof(msg));
-    YBCrypto_memset(tv_hash, 0x00, sizeof(tv_hash));
+    YBCrypto_memset(tv_mac, 0x00, sizeof(tv_mac));
+    YBCrypto_memset(mac_digest, 0x00, sizeof(mac_digest));
+    key_bytelen = 0x00;
     msg_bytelen = 0x00;
-    hash_bytelen = 0x00;
-
-    return ret;
-}
-int32_t Inner_API_HMAC_SelfTest()
-{
-    int32_t ret = SUCCESS;
+    mac_bytelen = 0x00;
 
     return ret;
 }
