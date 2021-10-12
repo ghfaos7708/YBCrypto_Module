@@ -290,6 +290,20 @@ int32_t Inner_API_HashFunction_SelfTest()
 			ret = FAIL_KATSELF_TEST;
 			goto EXIT;
 		}
+		
+		YBCrypto_Hash_Init(HashTestVectors[cnt_i].algo);
+        YBCrypto_Hash_Update(msg, msg_bytelen);
+        YBCrypto_Hash_Final(hased_digest);
+
+		if (memcmp(hased_digest, tv_hash, HASH_DIGEST)) 
+        {
+			printf("alg = %08x",HashTestVectors[cnt_i].algo);
+        	print_hex("msg", msg, msg_bytelen);
+        	print_hex("tv_hash", tv_hash, hash_bytelen);
+        	print_hex("our", hased_digest, hash_bytelen);
+			ret = FAIL_KATSELF_TEST;
+			goto EXIT;
+		}
 	}
 
 EXIT:

@@ -24,7 +24,7 @@ int main()
 	// YBCrypto_PreSelfTest();
 	// YBCrypto_ModuleInfo();
 	// Destroy_YBCrypto();
-	// Cipher_Test();
+	Cipher_Test();
 	// _CTR_DRBG_ARIA_KAT_SelfTest();
 	return 0;
 }

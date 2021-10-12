@@ -49,7 +49,7 @@ int SHA256_init(HashManager *c)
 {
     int ret = SUCCESS;
     YBCrypto_memset(c, 0x00, sizeof(HashManager));
-    c->hash_function = SHA256;
+    c->algo = SHA256;
 
     if (c == NULL)
         return FAIL_CORE;
@@ -488,7 +488,7 @@ int SHA3_init(HashManager *c)
     int ret = SUCCESS;
 
     YBCrypto_memset(c, 0x00, sizeof(HashManager));
-    c->hash_function = SHA256;
+    c->algo = SHA3;
     c->keccakCapacity = KECCAK_SHA3_256 * 2;
     c->keccakRate = KECCAK_SPONGE_BIT - c->keccakCapacity;
 

@@ -132,7 +132,7 @@ INIT:
     }
 
 EXIT: 
-
+    if(ret != SUCCESS)  fprintf(stdout, "=*Location : YBCrypto_BlockCipher       =\n");
     parameter_flag = 0x00;
     state = 0x00;
     out_byteLen = 0x00;
@@ -249,7 +249,7 @@ INIT:
     }
 
 EXIT: 
-
+    if(ret != SUCCESS)  fprintf(stdout, "=*Location : YBCrypto_BlockCipher_Init  =\n");
     parameter_flag = 0x00;
     state = 0x00;
     return ret;
@@ -357,7 +357,7 @@ INIT:
     }
 
 EXIT: 
-
+    if(ret != SUCCESS)  fprintf(stdout, "=*Location : YBCrypto_BlockCipher_Update=\n");
     parameter_flag = 0x00;
     state = 0x00;
     return ret;
@@ -459,7 +459,7 @@ INIT:
     }
 
 EXIT: 
-
+    if(ret != SUCCESS)  fprintf(stdout, "=*Location : YBCrypto_BlockCipher_Final =\n");
     parameter_flag = 0x00;
     state = 0x00;
     YBCrypto_memset(&CM, 0x00, sizeof(CipherManager));

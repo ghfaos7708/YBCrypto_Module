@@ -103,7 +103,7 @@ typedef struct YBCrypto_cipher_manager_st
 #define SHA3 0x94400002
 #define LSH 0x94400003
 #define HASH_DIGEST 32
-
+#define HF_MAX_HASING_LEN 0x1000000000000000UL //2^60 = 2^63 / 8
 #define SHA256_SHORT uint8_t
 #define SHA256_LONG uint64_t
 #define SHA256_BLOCK_SIZE 64
@@ -114,7 +114,7 @@ typedef struct YBCrypto_cipher_manager_st
 
 typedef struct YBCrypto_Hash_manager_st
 {
-    uint32_t hash_function;
+    uint32_t algo;
     SHA256_LONG l1;
     SHA256_LONG l2;
     SHA256_LONG data[8];
@@ -133,7 +133,7 @@ typedef struct YBCrypto_Hash_manager_st
 typedef struct YBCrypto_Hmac_manager_st
 {
     HashManager hash_manger;
-    int32_t hash_function;
+    int32_t algo;
     int32_t keyset;
     uint8_t key[HMAC_SHA3_KEYSIZE];
     uint8_t keyLen;
@@ -182,8 +182,18 @@ int32_t YBCrypto_BlockCipher_Final(uint8_t *out, uint32_t *pad_bytelen);
 int32_t YBCrypto_BlockCipher_Clear(void);
 
 
-//! YBCrypto HashFunction API ////////////////////////////////////////////////////////
-int32_t YBCrypto_Hash(uint32_t ALG, const uint8_t *msg, uint64_t in_byteLen, uint8_t *md);
+//! YBCrypto HashFunction API ///////////////////////////////////////////////////////
+int32_t YBCrypto_Hash(uint32_t ALG, const uint8_t *msg, uint64_t msg_byteLen, uint8_t *md);
+int32_t YBCrypto_Hash_Init(uint32_t ALG);
+int32_t YBCrypto_Hash_Update(const uint8_t *msg, uint64_t msg_byteLen);
+int32_t YBCrypto_Hash_Final(uint8_t *md);
+int32_t YBCrypto_Hash_Clear(void);
+
+//! YBCrypto HMAC API ///////////////////////////////////////////////////////////////
 int32_t YBCrypto_HMAC(uint32_t ALG, const uint8_t *key, uint32_t key_bytelen, const uint8_t *msg, uint64_t msg_byteLen, uint8_t *mac);
+int32_t YBCrypto_HMAC_Init(uint32_t ALG, const uint8_t *key, uint32_t key_bytelen);
+int32_t YBCrypto_HMAC_Update(const uint8_t *msg, uint64_t msg_byteLen);
+int32_t YBCrypto_HMAC_Final(uint8_t *mac);
+int32_t YBCrypto_HMAC_Clear(void);
 #endif
 //EOF

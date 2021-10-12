@@ -6,7 +6,7 @@ int HMAC_init(HMACManager *c, uint32_t ALG, const uint8_t *key, uint32_t key_byt
     int ret = SUCCESS;
     YBCrypto_memset(c, 0x00, sizeof(HMACManager));
     c->keyset = FALSE;
-    c->hash_function = ALG;
+    c->algo = ALG;
 
     if (ALG == SHA256 && key_bytelen > HMAC_SHA256_KEYSIZE)
     {
@@ -48,14 +48,14 @@ int HMAC_update(HMACManager *c, const uint8_t *msg, uint64_t msg_bytelen)
         0x00,
     };
 
-    if (c->hash_function == SHA256)
+    if (c->algo == SHA256)
     {
         for (cnt_i = 0; cnt_i < HMAC_SHA256_KEYSIZE; cnt_i++)
         {
             K1[cnt_i] = IPAD ^ c->key[cnt_i];
         }
     }
-    else if (c->hash_function == SHA3)
+    else if (c->algo == SHA3)
     {
          for (cnt_i = 0; cnt_i < HMAC_SHA3_KEYSIZE; cnt_i++)
         {
@@ -66,13 +66,13 @@ int HMAC_update(HMACManager *c, const uint8_t *msg, uint64_t msg_bytelen)
     if (c->keyset == FALSE)
     {
 
-        if (c->hash_function == SHA256)
+        if (c->algo == SHA256)
         {
             SHA256_init(&(c->hash_manger));
             SHA256_update(&(c->hash_manger), K1, HMAC_SHA256_KEYSIZE);
             SHA256_update(&(c->hash_manger), msg, msg_bytelen);
         }
-        else if (c->hash_function == SHA3)
+        else if (c->algo == SHA3)
         {
             SHA3_init(&(c->hash_manger));
             SHA3_update(&(c->hash_manger), K1, HMAC_SHA3_KEYSIZE);
@@ -82,11 +82,11 @@ int HMAC_update(HMACManager *c, const uint8_t *msg, uint64_t msg_bytelen)
     }
     else
     {
-        if (c->hash_function == SHA256)
+        if (c->algo == SHA256)
         {
             SHA256_update(&(c->hash_manger), msg, msg_bytelen);
         }
-        else if (c->hash_function == SHA3)
+        else if (c->algo == SHA3)
         {
             SHA3_update(&(c->hash_manger), msg, msg_bytelen);
         }
@@ -108,14 +108,14 @@ int HMAC_final(HMACManager *c, uint8_t *mac)
 
     memset(K2, OPAD, HMAC_SHA3_KEYSIZE);
 
-    if (c->hash_function == SHA256)
+    if (c->algo == SHA256)
     {
         for (cnt_i = 0; cnt_i < HMAC_SHA256_KEYSIZE; cnt_i++)
         {
             K2[cnt_i] = OPAD ^ c->key[cnt_i];
         }
     }
-    else if (c->hash_function == SHA3)
+    else if (c->algo == SHA3)
     {
          for (cnt_i = 0; cnt_i < HMAC_SHA3_KEYSIZE; cnt_i++)
         {
@@ -123,7 +123,7 @@ int HMAC_final(HMACManager *c, uint8_t *mac)
         }
     }
 
-    if (c->hash_function == SHA256)
+    if (c->algo == SHA256)
     {
         SHA256_final(&(c->hash_manger), firsOut);
 
@@ -132,7 +132,7 @@ int HMAC_final(HMACManager *c, uint8_t *mac)
         SHA256_update(&(c->hash_manger), firsOut, sizeof(firsOut));
         SHA256_final(&(c->hash_manger), mac);
     }
-    else if (c->hash_function == SHA3)
+    else if (c->algo == SHA3)
     {
         SHA3_final(&(c->hash_manger), firsOut);
 
