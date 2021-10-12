@@ -165,7 +165,7 @@ const BlockCIipher_TV bcTestVectors[] = {
 									  0xF6, 0xB7, 0xFD, 0xE1, 0xA1, 0x30, 0xA0, 0x4B}, 48,
 									{ 0xA5, 0xC7, 0xCF, 0x9F, 0xE1, 0xB9, 0x49, 0x81, 
 									  0x94, 0xDB, 0x74, 0x89, 0x1C, 0xA2, 0x43, 0xF3} }, 
-									  //!done : ARIA-128 CBC Mode
+									//   //!done : ARIA-128 CBC Mode
 
 									{ ARIA, CTR_MODE,
 									{ 0x45, 0xE7, 0x75, 0x9A, 0x2E, 0x1A, 0x48, 0x1B, 
@@ -184,7 +184,7 @@ const BlockCIipher_TV bcTestVectors[] = {
 									  0x33, 0x3A, 0x4B, 0xA0, 0x9E, 0xCC, 0x4B, 0x1D}, 48,
 									{ 0xA5, 0xC7, 0xCF, 0x9F, 0xE1, 0xB9, 0x49, 0x81, 
 									  0x94, 0xDB, 0x74, 0x89, 0x1C, 0xA2, 0x43, 0xF3} },
-									  //!done : ARIA-128 CTR Mode
+									//   //!done : ARIA-128 CTR Mode
 									  };
 
 int32_t Inner_API_BlockCipher_SelfTest()
@@ -192,11 +192,14 @@ int32_t Inner_API_BlockCipher_SelfTest()
     int32_t ret = SUCCESS;
 	uint8_t ciphertext[500];
 	uint8_t recovered[128];
+	uint64_t out_bytelen = 0x00;
+	uint32_t pad_bytelen = 0x00;
 
     for (int32_t cnt_i = 0; cnt_i < sizeof(bcTestVectors) / sizeof(BlockCIipher_TV); cnt_i++)
 	{
         YBCrypto_memset(ciphertext, 0x00, sizeof(ciphertext));
         YBCrypto_memset(recovered, 0x00, sizeof(recovered));
+		
 		//! Encrypt and Decrypt Test
         YBCrypto_BlockCipher(bcTestVectors[cnt_i].algo, bcTestVectors[cnt_i].mode,ENCRYPT,bcTestVectors[cnt_i].masterkey,bcTestVectors[cnt_i].key_bitlen,bcTestVectors[cnt_i].plaintext,bcTestVectors[cnt_i].pt_bytelen,bcTestVectors[cnt_i].IV,ciphertext);
 		if (memcmp(bcTestVectors[cnt_i].ciphertext_ct, ciphertext, bcTestVectors[cnt_i].pt_bytelen))
@@ -204,8 +207,9 @@ int32_t Inner_API_BlockCipher_SelfTest()
             ret = FAIL_KATSELF_TEST;
 			goto EXIT;
         }
-
-        YBCrypto_BlockCipher(bcTestVectors[cnt_i].algo, bcTestVectors[cnt_i].mode,DECRYPT,bcTestVectors[cnt_i].masterkey,bcTestVectors[cnt_i].key_bitlen, ciphertext, bcTestVectors[cnt_i].pt_bytelen, bcTestVectors[cnt_i].IV, recovered);
+		YBCrypto_BlockCipher_Init(bcTestVectors[cnt_i].algo, bcTestVectors[cnt_i].mode, DECRYPT, bcTestVectors[cnt_i].masterkey, bcTestVectors[cnt_i].key_bitlen,bcTestVectors[cnt_i].IV);
+		YBCrypto_BlockCipher_Update(ciphertext, bcTestVectors[cnt_i].pt_bytelen,recovered, &out_bytelen);
+		YBCrypto_BlockCipher_Final(recovered, &pad_bytelen);
 		if (memcmp(bcTestVectors[cnt_i].plaintext, recovered, bcTestVectors[cnt_i].pt_bytelen))
         {
             ret = FAIL_KATSELF_TEST;

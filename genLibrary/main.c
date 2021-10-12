@@ -21,8 +21,8 @@ void _CTR_DRBG_ARIA_KAT_SelfTest();
 int main()
 {	
 	Load_YBCrypto();
-	YBCrypto_PreSelfTest();
-	YBCrypto_ModuleInfo();
+	// YBCrypto_PreSelfTest();
+	// YBCrypto_ModuleInfo();
 	// Destroy_YBCrypto();
 	// Cipher_Test();
 	// _CTR_DRBG_ARIA_KAT_SelfTest();

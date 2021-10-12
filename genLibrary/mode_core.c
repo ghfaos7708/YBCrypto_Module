@@ -30,7 +30,7 @@ static void count_increase(uint8_t *ctr)
     }
 }
 
-int32_t ECB_Init(CipherManager *c, int32_t ALG, int32_t direct, const uint8_t *userkey, uint32_t key_bitlen)
+int32_t ECB_Init(CipherManager *c, uint32_t ALG, uint32_t direct, const uint8_t *userkey, uint32_t key_bitlen)
 {
     // 1. set informations in CipherManager
     // 2. key scheduling
@@ -41,7 +41,8 @@ int32_t ECB_Init(CipherManager *c, int32_t ALG, int32_t direct, const uint8_t *u
     {
     case AES:
 
-        c->block_cipher = AES;
+        c->algo = AES;
+        c->mode = ECB_MODE;
         c->key_bitsize = key_bitlen;
         c->block_size = BC_MAX_BLOCK_SIZE;
         c->direct = direct;
@@ -57,7 +58,8 @@ int32_t ECB_Init(CipherManager *c, int32_t ALG, int32_t direct, const uint8_t *u
         break;
 
     case ARIA:
-        c->block_cipher = ARIA;
+        c->algo = ARIA;
+        c->mode = ECB_MODE;
         c->key_bitsize = key_bitlen;
         c->block_size = BC_MAX_BLOCK_SIZE;
         c->direct = direct;
@@ -92,22 +94,22 @@ int32_t ECB_Update(CipherManager *c, const uint8_t *in, uint64_t in_byteLen, uin
         memcpy(c->buf + c->remained_len, in + Update_index, BC_MAX_BLOCK_SIZE - c->remained_len);
         if (c->direct == ENCRYPT)
         {
-            if (c->block_cipher == AES)
+            if (c->algo == AES)
             {
                 AES_encrypt(c->buf, out + (count_loop * BC_MAX_BLOCK_SIZE) + c->encrypted_len, &(c->aes_key));
             }
-            else if (c->block_cipher == ARIA)
+            else if (c->algo == ARIA)
             {
                 ARIA_Crypt(c->buf, c->aria_key.rounds, &(c->aria_key), out + (count_loop * BC_MAX_BLOCK_SIZE) + c->encrypted_len);
             }
         }
         else
         {
-            if (c->block_cipher == AES)
+            if (c->algo == AES)
             {
                 AES_decrypt(c->buf, out + (count_loop * BC_MAX_BLOCK_SIZE) + c->encrypted_len, &(c->aes_key));
             }
-            else if (c->block_cipher == ARIA)
+            else if (c->algo == ARIA)
             {
                 ARIA_Crypt(c->buf, c->aria_key.rounds, &(c->aria_key), out + (count_loop * BC_MAX_BLOCK_SIZE) + c->encrypted_len);
             }
@@ -138,11 +140,11 @@ int32_t ECB_Final(CipherManager *c, uint8_t *out, uint32_t *pad_bytelen)
         memcpy(c->lastblock, c->buf, c->remained_len);
         if (c->direct == ENCRYPT)
         {
-            if (c->block_cipher == AES)
+            if (c->algo == AES)
             {
                 AES_encrypt(c->lastblock, out + c->encrypted_len, &(c->aes_key));
             }
-            else if (c->block_cipher == ARIA)
+            else if (c->algo == ARIA)
             {
                 ARIA_Crypt(c->lastblock, c->aria_key.rounds, &(c->aria_key), out + c->encrypted_len);
             }
@@ -160,7 +162,7 @@ int32_t ECB_Final(CipherManager *c, uint8_t *out, uint32_t *pad_bytelen)
     return ret;
 }
 
-int32_t CBC_Init(CipherManager *c, int32_t ALG, int32_t direct, const uint8_t *userkey, int32_t key_bitlen, const uint8_t *iv)
+int32_t CBC_Init(CipherManager *c, uint32_t ALG, uint32_t direct, const uint8_t *userkey, int32_t key_bitlen, const uint8_t *iv)
 {
     int32_t ret = SUCCESS;
 
@@ -169,7 +171,8 @@ int32_t CBC_Init(CipherManager *c, int32_t ALG, int32_t direct, const uint8_t *u
     {
     case AES:
 
-        c->block_cipher = AES;
+        c->algo = AES;
+        c->mode = CBC_MODE;
         c->key_bitsize = key_bitlen;
         c->block_size = BC_MAX_BLOCK_SIZE;
         c->direct = direct;
@@ -186,7 +189,8 @@ int32_t CBC_Init(CipherManager *c, int32_t ALG, int32_t direct, const uint8_t *u
         break;
 
     case ARIA:
-        c->block_cipher = ARIA;
+        c->algo = ARIA;
+        c->mode = CBC_MODE;
         c->key_bitsize = key_bitlen;
         c->block_size = BC_MAX_BLOCK_SIZE;
         c->direct = direct;
@@ -228,22 +232,22 @@ int32_t CBC_Update(CipherManager *c, const uint8_t *in, uint64_t in_byteLen, uin
             {
                 c->buf[cnt_i] ^= c->iv[cnt_i];
             }
-            if (c->block_cipher == AES)
+            if (c->algo == AES)
             {
                 AES_encrypt(c->buf, out + (count_loop * BC_MAX_BLOCK_SIZE) + c->encrypted_len, &(c->aes_key));
             }
-            else if (c->block_cipher == ARIA)
+            else if (c->algo == ARIA)
             {
                 ARIA_Crypt(c->buf, c->aria_key.rounds, &(c->aria_key), out + (count_loop * BC_MAX_BLOCK_SIZE) + c->encrypted_len);
             }
         }
         else
         {
-            if (c->block_cipher == AES)
+            if (c->algo == AES)
             {
                 AES_decrypt(c->buf, out + (count_loop * BC_MAX_BLOCK_SIZE) + c->encrypted_len, &(c->aes_key));
             }
-            else if (c->block_cipher == ARIA)
+            else if (c->algo == ARIA)
             {
                 ARIA_Crypt(c->buf, c->aria_key.rounds, &(c->aria_key), out + (count_loop * BC_MAX_BLOCK_SIZE) + c->encrypted_len);
             }
@@ -292,11 +296,11 @@ int32_t CBC_Final(CipherManager *c, uint8_t *out, uint32_t *pad_bytelen)
             {
                 c->lastblock[cnt_i] ^= c->iv[cnt_i];
             }
-            if (c->block_cipher == AES)
+            if (c->algo == AES)
             {
                 AES_encrypt(c->lastblock, out + c->encrypted_len, &(c->aes_key));
             }
-            else if (c->block_cipher == ARIA)
+            else if (c->algo == ARIA)
             {
                 ARIA_Crypt(c->lastblock, c->aria_key.rounds, &(c->aria_key), out + c->encrypted_len);
             }
@@ -313,7 +317,7 @@ int32_t CBC_Final(CipherManager *c, uint8_t *out, uint32_t *pad_bytelen)
     return ret;
 }
 
-int32_t CTR_Init(CipherManager *c, int32_t ALG, int32_t direct, const uint8_t *userkey, int32_t key_bitlen, const uint8_t *iv)
+int32_t CTR_Init(CipherManager *c, uint32_t ALG, uint32_t direct, const uint8_t *userkey, int32_t key_bitlen, const uint8_t *iv)
 {
     int32_t ret = SUCCESS;
 
@@ -322,7 +326,8 @@ int32_t CTR_Init(CipherManager *c, int32_t ALG, int32_t direct, const uint8_t *u
     {
     case AES:
 
-        c->block_cipher = AES;
+        c->algo = AES;
+        c->mode = CTR_MODE;
         c->key_bitsize = key_bitlen;
         c->block_size = BC_MAX_BLOCK_SIZE;
         c->direct = direct;
@@ -331,7 +336,8 @@ int32_t CTR_Init(CipherManager *c, int32_t ALG, int32_t direct, const uint8_t *u
         break;
 
     case ARIA:
-        c->block_cipher = ARIA;
+        c->algo = ARIA;
+        c->mode = CTR_MODE;
         c->key_bitsize = key_bitlen;
         c->block_size = BC_MAX_BLOCK_SIZE;
         c->direct = direct;
@@ -366,11 +372,11 @@ int32_t CTR_Update(CipherManager *c, const uint8_t *in, uint64_t in_byteLen, uin
         {
             count_increase(c->iv);
         }
-        if (c->block_cipher == AES)
+        if (c->algo == AES)
         {
             AES_encrypt(c->iv, ciphertext, &(c->aes_key));
         }
-        else if (c->block_cipher == ARIA)
+        else if (c->algo == ARIA)
         {
             ARIA_Crypt(c->iv, c->aria_key.rounds, &(c->aria_key), ciphertext);
         }
@@ -411,11 +417,11 @@ int32_t CTR_Final(CipherManager *c, uint8_t *out, uint32_t *pad_bytelen)
 
         if (c->direct == ENCRYPT)
         {
-            if (c->block_cipher == AES)
+            if (c->algo == AES)
             {
                 AES_encrypt(c->iv, ciphertext, &(c->aes_key));
             }
-            else if (c->block_cipher == ARIA)
+            else if (c->algo == ARIA)
             {
                 ARIA_Crypt(c->iv, c->aria_key.rounds, &(c->aria_key), ciphertext);
             }

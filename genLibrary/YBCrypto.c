@@ -8,7 +8,7 @@ extern HashManager HM;
 extern HMACManager MM;
 extern DRBGManager DM;
 
-static int32_t Inner_API_GetState(void)
+int32_t Inner_API_GetState(void)
 {
 	return YBCRYPTO_STATE;
 }
@@ -76,6 +76,7 @@ int32_t YBCrypto_PreSelfTest(void)
 	fprintf(stdout, "=*CM-> YBCrtypto_CM_PRE_SELFTEST        =\n");
 	fprintf(stdout, "=*PreSelf_Testing.......................=\n");
 
+	YBCrypto_ChangeState(YBCrtypto_CM_PRE_SELFTEST);
 	ret = Inner_API_PreSelfTest();
 
 	if(ret != SUCCESS)
@@ -92,6 +93,7 @@ int32_t YBCrypto_PreSelfTest(void)
 	fprintf(stdout, "=*--> SUCESS!!!!!!                      =\n");
 	fprintf(stdout, "=*CM-> YBCrtypto_CM_NOMAL_VM            =\n");
 	fprintf(stdout, "=========================================\n");
+	YBCrypto_ChangeState(YBCrtypto_CM_NOMAL_VM);
 
 	return ret;
 }
@@ -143,6 +145,7 @@ void YBCrypto_ChangeState(int32_t newState)
 		break;
 	default:
 #ifdef PRINT_MODE
+		//Do not occur.
 		fprintf(stdout, "[YBCrypto_ChangeState] Error\n");
 #endif
 		break;

@@ -1,6 +1,9 @@
 #include "YBCrypto.h"
 #include "hash.h"
 
+extern int32_t YBCRYPTO_STATE;
+extern IS_ALG_TESTED algTestedFlag;
+extern int32_t Inner_API_GetState(void);
 HashManager HM;
 
 int32_t YBCrypto_Hash(uint32_t ALG, const uint8_t *msg, uint64_t in_byteLen, uint8_t *md)

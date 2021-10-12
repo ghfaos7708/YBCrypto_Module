@@ -78,19 +78,20 @@ typedef struct aria_key_st
 
 typedef struct YBCrypto_cipher_manager_st
 {
-    uint64_t encrypted_len;
-    uint32_t block_cipher;
+    uint32_t algo;
+    uint32_t mode;
+    uint32_t direct;
     uint32_t key_bitsize;
     uint32_t block_size;
 
     uint32_t last_block_flag;
     uint32_t remained_len;
     uint32_t pad_len;
-    uint32_t direct;
 
     uint8_t iv[BC_MAX_BLOCK_SIZE];
     uint8_t buf[BC_MAX_BLOCK_SIZE];
     uint8_t lastblock[BC_MAX_BLOCK_SIZE];
+    uint64_t encrypted_len;
 
     ARIA_KEY aria_key;
     AES_KEY aes_key;
@@ -163,11 +164,11 @@ typedef struct YBCrypto_CTR_DRBG_manager_st
 void Load_YBCrypto(void);
 void Destroy_YBCrypto(void);
 
-//! YBCrypto Inner API /////////////////////////////////////////////////////////////
+//! YBCrypto Inner API (not external API) ///////////////////////////////////////////
 void YBCrypto_memset(void *pointer, int32_t value, int32_t size);
 void YBCrypto_ChangeState(int32_t newState);
 
-//! YBCrypto open API /////////////////////////////////////////////////////////////
+//! YBCrypto Common API /////////////////////////////////////////////////////////////
 void YBCrypto_ModuleInfo(void); //*done
 int32_t YBCrypto_GetState(void); //*done
 int32_t YBCrypto_PreSelfTest(void); //*done
@@ -175,6 +176,13 @@ int32_t YBCrypto_PreSelfTest(void); //*done
 
 //! YBCrypto BlockCipher API ////////////////////////////////////////////////////////
 int32_t YBCrypto_BlockCipher(uint32_t ALG, int32_t MODE, int32_t direct, const uint8_t *user_key, uint32_t key_bitlen, const uint8_t *in, uint64_t in_byteLen, const uint8_t *iv, uint8_t *out);
+int32_t YBCrypto_BlockCipher_Init(uint32_t ALG, int32_t MODE, int32_t direct, const uint8_t *user_key, uint32_t key_bitlen, const uint8_t *iv);
+int32_t YBCrypto_BlockCipher_Update(const uint8_t *in, uint64_t in_byteLen, uint8_t *out, uint64_t *out_byteLen);
+int32_t YBCrypto_BlockCipher_Final(uint8_t *out, uint32_t *pad_bytelen);
+int32_t YBCrypto_BlockCipher_Clear(void);
+
+
+//! YBCrypto HashFunction API ////////////////////////////////////////////////////////
 int32_t YBCrypto_Hash(uint32_t ALG, const uint8_t *msg, uint64_t in_byteLen, uint8_t *md);
 int32_t YBCrypto_HMAC(uint32_t ALG, const uint8_t *key, uint32_t key_bytelen, const uint8_t *msg, uint64_t msg_byteLen, uint8_t *mac);
 #endif
