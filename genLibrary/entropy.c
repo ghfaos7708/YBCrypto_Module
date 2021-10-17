@@ -55,6 +55,23 @@ static int32_t Inner_API_RepetitionTest_getEntropy(uint8_t *entropybuffer)
 
 REPEAT : 
 
+#ifdef _WIN64
+//todo Need To Fix
+	if ((fp = fopen("CryptoRandom", "r")) != NULL)
+    {
+        length = fread(fst_buffer, sizeof(uint8_t), ENTROPY_WINDOW, fp);
+        fclose(fp);
+        fp = NULL;
+    }
+
+    if ((fp = fopen("CryptoRandom", "r")) != NULL)
+    {
+        length = fread(snd_buffer, sizeof(uint8_t), ENTROPY_WINDOW, fp);
+        fclose(fp);
+        fp = NULL;
+    }
+
+#else //* MAC OS and Linux
     if ((fp = fopen("/dev/urandom", "r")) != NULL)
     {
         length = fread(fst_buffer, sizeof(uint8_t), ENTROPY_WINDOW, fp);
@@ -68,6 +85,7 @@ REPEAT :
         fclose(fp);
         fp = NULL;
     }
+#endif
     if (!memcmp(fst_buffer, snd_buffer, ENTROPY_WINDOW))
     {
         RCT_CutOff++;
