@@ -3,8 +3,12 @@
 
 #include "YBCrypto.h"
 
-void Inner_API_EntropyAdd(uint8_t *entrophy, uint32_t collectedlen, uint32_t cur_pos, uint8_t *src, uint32_t srclen, const int8_t *title);
-int32_t Inner_API_GetEntropy(uint8_t entropy[], uint32_t size);
+#define MAX_ENTROPY_LEN 256 // 256 bytes  = 2048-bit >= 112-bit
+#define REPEAT_TEST_CUTOFF 5 //(RCT CutOff)
+#define ADAPTIVE_TEST_CUTOFF 6 //(APT CutOff)
+#define ENTROPY_WINDOW 16
+
+int32_t Inner_API_DRBG_CENT(uint8_t *entropy, uint32_t bytelen, uint32_t test_flag);
 
 #endif
 //EOF

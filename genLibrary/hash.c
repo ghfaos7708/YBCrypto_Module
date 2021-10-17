@@ -4,6 +4,7 @@
 extern int32_t YBCRYPTO_STATE;
 extern IS_ALG_TESTED algTestedFlag;
 extern int32_t Inner_API_GetState(void);
+extern void YBCrypto_ChangeState(int32_t newState);
 HashManager HM;
 
 int32_t YBCrypto_Hash(uint32_t ALG, const uint8_t *msg, uint64_t msg_byteLen, uint8_t *md)

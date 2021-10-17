@@ -9,6 +9,7 @@
 #include "blockcipher.h"
 #include "hmac.h"
 #include "ctr_drbg.h"
+#include "entropy.h"
 
 //TODO 10/13 --> CTR_DRBG 구성 및 entropy 함수 추가하기
 

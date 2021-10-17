@@ -1,5 +1,6 @@
 #include "YBCrypto.h"
 #include "KAT_test.h"
+#include "entropy.h"
 
 int32_t YBCRYPTO_STATE = YBCrtypto_CM_LOAD;
 IS_ALG_TESTED algTestedFlag;
@@ -27,7 +28,7 @@ static int32_t Inner_API_PreSelfTest(void)
 	algTestedFlag.isHMACTested = FAIL_NOT_PERFORM_KATSELFTEST;
 	algTestedFlag.isDRBGTested = FAIL_NOT_PERFORM_KATSELFTEST;
 
-	//TODO KAT Test
+	//! KAT Test
 	ret = Inner_API_KatSelfTest();
 
 	if (ret != SUCCESS)
@@ -35,7 +36,8 @@ static int32_t Inner_API_PreSelfTest(void)
 		fprintf(stdout, "=*Location : Inner_API_PreSelfTest(KAT) =\n");
 		goto EXIT;
 	}
-	//TODO Entropy Test
+	//! Entropy Test
+	ret = Inner_API_DRBG_CENT(NULL, 0, TRUE);
 	if (ret != SUCCESS)
 	{
 		fprintf(stdout, "=*Location : Inner_API_PreSelfTest(Ent) =\n");
@@ -51,6 +53,45 @@ static int32_t Inner_API_PreSelfTest(void)
 EXIT:
 	return ret;
 }
+
+void YBCrypto_ChangeState(int32_t newState)
+{
+
+	switch (newState)
+	{
+	case YBCrtypto_CM_LOAD:
+		YBCRYPTO_STATE = YBCrtypto_CM_LOAD;
+		break;
+	case YBCrtypto_CM_NOMAL_VM:
+		YBCRYPTO_STATE = YBCrtypto_CM_NOMAL_VM;
+		break;
+	case YBCrtypto_CM_NOMAL_NVM:
+		YBCRYPTO_STATE = YBCrtypto_CM_NOMAL_NVM;
+		break;
+	case YBCrtypto_CM_PRE_SELFTEST:
+		YBCRYPTO_STATE = YBCrtypto_CM_PRE_SELFTEST;
+		break;
+	case YBCrtypto_CM_COND_SELFTEST:
+		YBCRYPTO_STATE = YBCrtypto_CM_COND_SELFTEST;
+		break;
+	case YBCrtypto_CM_NORMAL_ERROR:
+		YBCRYPTO_STATE = YBCrtypto_CM_NORMAL_ERROR;
+		break;
+	case YBCrtypto_CM_CRITICAL_ERROR:
+		YBCRYPTO_STATE = YBCrtypto_CM_CRITICAL_ERROR;
+		break;
+	case YBCrtypto_CM_EXIT:
+		YBCRYPTO_STATE = YBCrtypto_CM_EXIT;
+		break;
+	default:
+#ifdef PRINT_MODE
+		//Do not occur.
+		fprintf(stdout, "[YBCrypto_ChangeState] Error\n");
+#endif
+		break;
+	}
+}
+
 
 int32_t YBCrypto_PreSelfTest(void)
 {
@@ -112,44 +153,6 @@ int32_t YBCrypto_GetState(void)
 	}
 
 	return state;
-}
-
-void YBCrypto_ChangeState(int32_t newState)
-{
-
-	switch (newState)
-	{
-	case YBCrtypto_CM_LOAD:
-		YBCRYPTO_STATE = YBCrtypto_CM_LOAD;
-		break;
-	case YBCrtypto_CM_NOMAL_VM:
-		YBCRYPTO_STATE = YBCrtypto_CM_NOMAL_VM;
-		break;
-	case YBCrtypto_CM_NOMAL_NVM:
-		YBCRYPTO_STATE = YBCrtypto_CM_NOMAL_NVM;
-		break;
-	case YBCrtypto_CM_PRE_SELFTEST:
-		YBCRYPTO_STATE = YBCrtypto_CM_PRE_SELFTEST;
-		break;
-	case YBCrtypto_CM_COND_SELFTEST:
-		YBCRYPTO_STATE = YBCrtypto_CM_COND_SELFTEST;
-		break;
-	case YBCrtypto_CM_NORMAL_ERROR:
-		YBCRYPTO_STATE = YBCrtypto_CM_NORMAL_ERROR;
-		break;
-	case YBCrtypto_CM_CRITICAL_ERROR:
-		YBCRYPTO_STATE = YBCrtypto_CM_CRITICAL_ERROR;
-		break;
-	case YBCrtypto_CM_EXIT:
-		YBCRYPTO_STATE = YBCrtypto_CM_EXIT;
-		break;
-	default:
-#ifdef PRINT_MODE
-		//Do not occur.
-		fprintf(stdout, "[YBCrypto_ChangeState] Error\n");
-#endif
-		break;
-	}
 }
 
 void YBCrypto_memset(void *pointer, int32_t value, int32_t size)

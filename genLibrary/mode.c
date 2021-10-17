@@ -4,6 +4,7 @@
 extern int32_t YBCRYPTO_STATE;
 extern IS_ALG_TESTED algTestedFlag;
 extern int32_t Inner_API_GetState(void);
+extern void YBCrypto_ChangeState(int32_t newState);
 CipherManager CM;
 
 int32_t YBCrypto_BlockCipher(uint32_t ALG, int32_t MODE, int32_t direct, const uint8_t *user_key, uint32_t key_bitlen, const uint8_t *in, uint64_t in_byteLen, const uint8_t *iv, uint8_t *out)

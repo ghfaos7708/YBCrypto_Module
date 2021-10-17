@@ -29,7 +29,7 @@ enum YBCrtypto_FUNCTION_RESULT
     FAIL_DRBG_INNER_FUNCTION,
     FAIL_DRBG_ENTROPY_LEN_SMALL,
     FAIL_DRBG_NONCE_LEN_SMALL,
-    FAIL_DRBG_ENTROPY_TEST,
+    FAIL_ENTROPY_TEST,
     FAIL_DRBG_NOT_INITIALIZE,
 };
 
@@ -166,14 +166,11 @@ typedef struct YBCrypto_CTR_DRBG_manager_st
 void Load_YBCrypto(void);
 void Destroy_YBCrypto(void);
 
-//! YBCrypto Inner API (not external API) ///////////////////////////////////////////
-void YBCrypto_memset(void *pointer, int32_t value, int32_t size);
-void YBCrypto_ChangeState(int32_t newState);
-
 //! YBCrypto Common API /////////////////////////////////////////////////////////////
+void YBCrypto_memset(void *pointer, int32_t value, int32_t size); //*done
 void YBCrypto_ModuleInfo(void);     //*done
 int32_t YBCrypto_GetState(void);    //*done
-int32_t YBCrypto_PreSelfTest(void); //*done
+int32_t YBCrypto_PreSelfTest(void); //todo integrity Test
 
 //! YBCrypto BlockCipher API ////////////////////////////////////////////////////////
 int32_t YBCrypto_BlockCipher(uint32_t ALG, int32_t MODE, int32_t direct, const uint8_t *user_key, uint32_t key_bitlen, const uint8_t *in, uint64_t in_byteLen, const uint8_t *iv, uint8_t *out);
@@ -195,5 +192,6 @@ int32_t YBCrypto_HMAC_Init(uint32_t ALG, const uint8_t *key, uint32_t key_bytele
 int32_t YBCrypto_HMAC_Update(const uint8_t *msg, uint64_t msg_byteLen);
 int32_t YBCrypto_HMAC_Final(uint8_t *mac);
 int32_t YBCrypto_HMAC_Clear(void);
+
 #endif
 //EOF
