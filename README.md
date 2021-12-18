@@ -2,7 +2,7 @@
 
 This code is provided along with KCMVP (Korea Cryptographic Module. Validation Program) assignment for “Security Implementation Development Methodology”, a first-year graduate course.
 
-If you have any examples that you can add or anything you think should be improved, please send an email to apple. I'm planning to expand this collection with the various cryptographic algorithms that can be implemented into KCMVP. Ultimately, I'm planning to unify implementations for multiple OS in batches. If you have input about what should be covered, I'd be grateful for any input.
+If you have any examples that you can add or anything you think should be improved, please send an email to <darania@kookmin.ac.kr>. I'm planning to expand this collection with the various cryptographic algorithms that can be implemented into KCMVP. Ultimately, I'm planning to unify implementations for multiple OS in batches. If you have input about what should be covered, I'd be grateful for any input.
 
 ## what my code is trying to achieve
 
