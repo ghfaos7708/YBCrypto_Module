@@ -15,8 +15,8 @@ If you have any examples that you can add or anything you think should be improv
 
 ## Structure
 
-|제목|내용|설명|
+|Chapter|Algorithm|Security|
 |------|---|---|
-|테스트1|테스트2|테스트3|
-|테스트1|테스트2|테스트3|
-|테스트1|테스트2|테스트3|
+|Block Cipher|ARIA/AES|128/192/256|
+|HashFunction|SHA/SHA3|256|
+|Message Authentication |HMAC|SHA256/SHA3_256|
