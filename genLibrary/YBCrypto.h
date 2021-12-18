@@ -97,12 +97,11 @@ typedef struct YBCrypto_cipher_manager_st
     ARIA_KEY aria_key;
     AES_KEY aes_key;
 
-} CipherManager; // provides AES, ARIA, LEA, SEED
+} CipherManager; // provides AES, ARIA
 
 //! Hash Function ////////////////////////////////////////////////////////////////
 #define SHA256 0x94400001
 #define SHA3 0x94400002
-#define LSH 0x94400003
 #define HASH_DIGEST 32
 #define HF_MAX_HASING_LEN 0x1000000000000000UL //2^60 = 2^63 / 8
 #define SHA256_SHORT uint8_t
@@ -173,18 +172,18 @@ int32_t YBCrypto_GetState(void);    //*done
 int32_t YBCrypto_PreSelfTest(void); //todo integrity Test
 
 //! YBCrypto BlockCipher API ////////////////////////////////////////////////////////
-int32_t YBCrypto_BlockCipher(uint32_t ALG, int32_t MODE, int32_t direct, const uint8_t *user_key, uint32_t key_bitlen, const uint8_t *in, uint64_t in_byteLen, const uint8_t *iv, uint8_t *out);
-int32_t YBCrypto_BlockCipher_Init(uint32_t ALG, int32_t MODE, int32_t direct, const uint8_t *user_key, uint32_t key_bitlen, const uint8_t *iv);
-int32_t YBCrypto_BlockCipher_Update(const uint8_t *in, uint64_t in_byteLen, uint8_t *out, uint64_t *out_byteLen);
-int32_t YBCrypto_BlockCipher_Final(uint8_t *out, uint32_t *pad_bytelen);
-int32_t YBCrypto_BlockCipher_Clear(void);
+int32_t YBCrypto_BlockCipher(CipherManager* CM, uint32_t ALG, int32_t MODE, int32_t direct, const uint8_t *user_key, uint32_t key_bitlen, const uint8_t *in, uint64_t in_byteLen, const uint8_t *iv, uint8_t *out);
+int32_t YBCrypto_BlockCipher_Init(CipherManager* CM, uint32_t ALG, int32_t MODE, int32_t direct, const uint8_t *user_key, uint32_t key_bitlen, const uint8_t *iv);
+int32_t YBCrypto_BlockCipher_Update(CipherManager* CM, const uint8_t *in, uint64_t in_byteLen, uint8_t *out, uint64_t *out_byteLen);
+int32_t YBCrypto_BlockCipher_Final(CipherManager* CM, uint8_t *out, uint32_t *pad_bytelen);
+int32_t YBCrypto_BlockCipher_Clear(CipherManager* CM);
 
 //! YBCrypto HashFunction API ///////////////////////////////////////////////////////
-int32_t YBCrypto_Hash(uint32_t ALG, const uint8_t *msg, uint64_t msg_byteLen, uint8_t *md);
-int32_t YBCrypto_Hash_Init(uint32_t ALG);
-int32_t YBCrypto_Hash_Update(const uint8_t *msg, uint64_t msg_byteLen);
-int32_t YBCrypto_Hash_Final(uint8_t *md);
-int32_t YBCrypto_Hash_Clear(void);
+int32_t YBCrypto_Hash(HashManager* HM, uint32_t ALG, const uint8_t *msg, uint64_t msg_byteLen, uint8_t *md);
+int32_t YBCrypto_Hash_Init(HashManager* HM, uint32_t ALG);
+int32_t YBCrypto_Hash_Update(HashManager* HM, const uint8_t *msg, uint64_t msg_byteLen);
+int32_t YBCrypto_Hash_Final(HashManager* HM, uint8_t *md);
+int32_t YBCrypto_Hash_Clear(HashManager* HM);
 
 //! YBCrypto HMAC API ///////////////////////////////////////////////////////////////
 int32_t YBCrypto_HMAC(uint32_t ALG, const uint8_t *key, uint32_t key_bytelen, const uint8_t *msg, uint64_t msg_byteLen, uint8_t *mac);
@@ -192,6 +191,26 @@ int32_t YBCrypto_HMAC_Init(uint32_t ALG, const uint8_t *key, uint32_t key_bytele
 int32_t YBCrypto_HMAC_Update(const uint8_t *msg, uint64_t msg_byteLen);
 int32_t YBCrypto_HMAC_Final(uint8_t *mac);
 int32_t YBCrypto_HMAC_Clear(void);
+
+
+//! YBCrypto CTR_DRBG API ///////////////////////////////////////////////////////////////
+int32_t YBCrypto_CTR_DRBG_Instantiate(
+                             uint32_t ALG, uint32_t key_bitlen,
+                             uint8_t *entropy_input, uint32_t entropy_bytelen,
+                             uint8_t *nonce, uint32_t nonce_bytelen,
+                             uint8_t *personalization_string, uint32_t string_bytelen,
+                             uint32_t derivation_function_flag);
+
+int32_t YBCrypto_CTR_DRBG_Reseed(
+                        uint8_t *entropy_input, uint32_t entropy_bytelen,
+                        uint8_t *additional_input, uint32_t add_bytelen);
+
+int32_t YBCrypto_CTR_DRBG_Generate(
+                          uint8_t *output, uint64_t requested_num_of_bits,
+                          uint8_t *entropy_input, uint32_t entropy_bytelen,
+                          uint8_t *addtional_input, uint32_t add_bytelen,
+                          uint32_t prediction_resistance_flag);
+
 
 #endif
 //EOF

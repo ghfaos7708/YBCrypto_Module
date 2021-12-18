@@ -136,6 +136,7 @@ int32_t Inner_API_BlockCipher_SelfTest()
 	uint8_t recovered[128];
 	uint64_t out_bytelen = 0x00;
 	uint32_t pad_bytelen = 0x00;
+	CipherManager CM;
 
 	for (int32_t cnt_i = 0; cnt_i < sizeof(bcTestVectors) / sizeof(BlockCIipher_TV); cnt_i++)
 	{
@@ -143,15 +144,15 @@ int32_t Inner_API_BlockCipher_SelfTest()
 		YBCrypto_memset(recovered, 0x00, sizeof(recovered));
 
 		//! Encrypt and Decrypt Test
-		YBCrypto_BlockCipher(bcTestVectors[cnt_i].algo, bcTestVectors[cnt_i].mode, ENCRYPT, bcTestVectors[cnt_i].masterkey, bcTestVectors[cnt_i].key_bitlen, bcTestVectors[cnt_i].plaintext, bcTestVectors[cnt_i].pt_bytelen, bcTestVectors[cnt_i].IV, ciphertext);
+		YBCrypto_BlockCipher(&CM, bcTestVectors[cnt_i].algo, bcTestVectors[cnt_i].mode, ENCRYPT, bcTestVectors[cnt_i].masterkey, bcTestVectors[cnt_i].key_bitlen, bcTestVectors[cnt_i].plaintext, bcTestVectors[cnt_i].pt_bytelen, bcTestVectors[cnt_i].IV, ciphertext);
 		if (memcmp(bcTestVectors[cnt_i].ciphertext_ct, ciphertext, bcTestVectors[cnt_i].pt_bytelen))
 		{
 			ret = FAIL_KATSELF_TEST;
 			goto EXIT;
 		}
-		YBCrypto_BlockCipher_Init(bcTestVectors[cnt_i].algo, bcTestVectors[cnt_i].mode, DECRYPT, bcTestVectors[cnt_i].masterkey, bcTestVectors[cnt_i].key_bitlen, bcTestVectors[cnt_i].IV);
-		YBCrypto_BlockCipher_Update(ciphertext, bcTestVectors[cnt_i].pt_bytelen, recovered, &out_bytelen);
-		YBCrypto_BlockCipher_Final(recovered, &pad_bytelen);
+		YBCrypto_BlockCipher_Init(&CM, bcTestVectors[cnt_i].algo, bcTestVectors[cnt_i].mode, DECRYPT, bcTestVectors[cnt_i].masterkey, bcTestVectors[cnt_i].key_bitlen, bcTestVectors[cnt_i].IV);
+		YBCrypto_BlockCipher_Update(&CM, ciphertext, bcTestVectors[cnt_i].pt_bytelen, recovered, &out_bytelen);
+		YBCrypto_BlockCipher_Final(&CM, recovered, &pad_bytelen);
 		if (memcmp(bcTestVectors[cnt_i].plaintext, recovered, bcTestVectors[cnt_i].pt_bytelen))
 		{
 			ret = FAIL_KATSELF_TEST;
@@ -165,6 +166,7 @@ EXIT:
 
 	YBCrypto_memset(ciphertext, 0x00, sizeof(ciphertext));
 	YBCrypto_memset(recovered, 0x00, sizeof(recovered));
+	YBCrypto_BlockCipher_Clear(&CM);
 
 	return ret;
 }
@@ -447,10 +449,10 @@ int32_t Inner_API_CTR_DRBG_SelfTest()
 	uint32_t KATLen = 0x00;
 	uint32_t returnedBitSize = 0x00;
 
-	//TODO it will be deleted
-	DRBGManager DRBG_DM = {
-		0x00,
-	};
+	// //TODO it will be deleted
+	// DRBGManager DRBG_DM = {
+	// 	0x00,
+	// };
 
 	for (int32_t cnt_i = 0; cnt_i < sizeof(CTR_DRBG_TestVectors) / sizeof(CTRDRBG_TV); cnt_i++)
 	{
@@ -468,10 +470,10 @@ int32_t Inner_API_CTR_DRBG_SelfTest()
 			addInput1Len = asc2hex(addInput1, (char *)CTR_DRBG_TestVectors[cnt_i].AdditionalInput1Str);
 			addInput2Len = asc2hex(addInput2, (char *)CTR_DRBG_TestVectors[cnt_i].AdditionalInput2Str);
 
-			CTR_DRBG_Instantiate(&DRBG_DM, CTR_DRBG_TestVectors[cnt_i].algo, CTR_DRBG_TestVectors[cnt_i].keybitlen, entropyInput, entropyInputLen, nonce1, nonce1Len, pString, pStringLen, USE_DF);
-			CTR_DRBG_Generate(&DRBG_DM, rand1, CTR_DRBG_TestVectors[cnt_i].returnedBitSize, NULL, 0, addInput1, addInput1Len, NO_PR);
-			CTR_DRBG_Reseed(&DRBG_DM, entropyReseed, entropyReseedLen, addInputReseed, addInputReseedLen);
-			CTR_DRBG_Generate(&DRBG_DM, rand2, CTR_DRBG_TestVectors[cnt_i].returnedBitSize, NULL, 0, NULL, 0, NO_PR);
+			YBCrypto_CTR_DRBG_Instantiate(CTR_DRBG_TestVectors[cnt_i].algo, CTR_DRBG_TestVectors[cnt_i].keybitlen, entropyInput, entropyInputLen, nonce1, nonce1Len, pString, pStringLen, USE_DF);
+			YBCrypto_CTR_DRBG_Generate(rand1, CTR_DRBG_TestVectors[cnt_i].returnedBitSize, NULL, 0, addInput1, addInput1Len, NO_PR);
+			YBCrypto_CTR_DRBG_Reseed(entropyReseed, entropyReseedLen, addInputReseed, addInputReseedLen);
+			YBCrypto_CTR_DRBG_Generate(rand2, CTR_DRBG_TestVectors[cnt_i].returnedBitSize, NULL, 0, NULL, 0, NO_PR);
 		}
 		else
 		{
@@ -480,9 +482,9 @@ int32_t Inner_API_CTR_DRBG_SelfTest()
 			addInput1Len = asc2hex(addInput1, (char *)CTR_DRBG_TestVectors[cnt_i].AdditionalInput1Str);
 			addInput2Len = asc2hex(addInput2, (char *)CTR_DRBG_TestVectors[cnt_i].AdditionalInput2Str);
 
-			CTR_DRBG_Instantiate(&DRBG_DM, CTR_DRBG_TestVectors[cnt_i].algo, CTR_DRBG_TestVectors[cnt_i].keybitlen, entropyInput, entropyInputLen, nonce1, nonce1Len, pString, pStringLen, USE_DF);
-			CTR_DRBG_Generate(&DRBG_DM, rand1, CTR_DRBG_TestVectors[cnt_i].returnedBitSize, entropyinputPR1, entropyinputPR1Len, addInput1, addInput1Len, USE_PR);
-			CTR_DRBG_Generate(&DRBG_DM, rand2, CTR_DRBG_TestVectors[cnt_i].returnedBitSize, entropyinputPR2, entropyinputPR2Len, addInput2, addInput2Len, USE_PR);
+			YBCrypto_CTR_DRBG_Instantiate(CTR_DRBG_TestVectors[cnt_i].algo, CTR_DRBG_TestVectors[cnt_i].keybitlen, entropyInput, entropyInputLen, nonce1, nonce1Len, pString, pStringLen, USE_DF);
+			YBCrypto_CTR_DRBG_Generate(rand1, CTR_DRBG_TestVectors[cnt_i].returnedBitSize, entropyinputPR1, entropyinputPR1Len, addInput1, addInput1Len, USE_PR);
+			YBCrypto_CTR_DRBG_Generate(rand2, CTR_DRBG_TestVectors[cnt_i].returnedBitSize, entropyinputPR2, entropyinputPR2Len, addInput2, addInput2Len, USE_PR);
 		}
 
 		if (memcmp(KAT, rand2, returnedBitSize / 8))

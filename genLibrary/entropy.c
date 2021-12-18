@@ -178,8 +178,8 @@ EXIT:
     if(ret != SUCCESS)  fprintf(stdout, "=*Location : Inner_API_DRBG_CENT        =\n");
     YBCrypto_memset(pEnt1, 0x00, MAX_ENTROPY_LEN);
     YBCrypto_memset(pEnt2, 0x00, MAX_ENTROPY_LEN);
-    if(pEnt1) free(pEnt1);
-    if(pEnt2) free(pEnt2);
+    if(pEnt1 != NULL) free(pEnt1);
+    if(pEnt2 != NULL) free(pEnt2);
 
     return ret;
 

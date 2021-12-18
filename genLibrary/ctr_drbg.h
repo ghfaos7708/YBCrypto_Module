@@ -13,6 +13,9 @@
 
 #define DM_INITIALIZED_FLAG 0x94500099
 #define MAX_RESEED_COUNTER 0x1000000000000UL // 2^48
+#define MAX_PERSONALIZED_STRING_LEN	0x100000000	// 2^35 bits
+#define MAX_ADDITIONAL_INPUT_LEN 0x100000000		// 2^35 bits
+#define MAX_RAND_BYTE_LEN 2048	
 
 int32_t CTR_DRBG_Instantiate(DRBGManager *DM,
                              uint32_t algo, uint32_t key_bitlen,

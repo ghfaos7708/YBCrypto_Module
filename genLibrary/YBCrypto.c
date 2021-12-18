@@ -220,6 +220,7 @@ void Load_YBCrypto(void)
 	}
 	else
 	{
+		fprintf(stdout, "=*--> SUCESS!!!!!!                      =\n");
 		fprintf(stdout, "=========================================\n");
 		fprintf(stdout, "=       [YBCrypto V1.0 Initialize]      =\n");
 		fprintf(stdout, "=*[Support Crypto]                      =\n");
@@ -262,9 +263,9 @@ void Destroy_YBCrypto(void)
 	{
 
 #ifdef _WIN64
-		system("cls");
+		//system("cls");
 #else //* MAC OS and Linux
-		system("clear");
+		//system("clear");
 #endif
 		fprintf(stdout, "=========================================\n");
 		fprintf(stdout, "=     [Destroy YBCryptoV1.0........]    =\n");
