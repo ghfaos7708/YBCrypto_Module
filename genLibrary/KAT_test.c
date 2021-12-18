@@ -5,10 +5,6 @@
 #include "ctr_drbg.h"
 
 extern IS_ALG_TESTED algTestedFlag;
-extern CipherManager CM;
-extern HashManager HM;
-extern HMACManager MM;
-extern DRBGManager DM;
 
 static void print_hex(char *valName, uint8_t *data, uint32_t dataByteLen)
 {
@@ -205,6 +201,7 @@ int32_t Inner_API_HashFunction_SelfTest()
 	uint8_t tv_hash[HASH_DIGEST];
 	int32_t msg_bytelen = 0x00;
 	int32_t hash_bytelen = 0x00;
+	HashManager HM = {0x00,};
 
 	for (int32_t cnt_i = 0; cnt_i < sizeof(HashTestVectors) / sizeof(HashFunction_TV); cnt_i++)
 	{
@@ -215,7 +212,7 @@ int32_t Inner_API_HashFunction_SelfTest()
 		//! be Careful! we use string2hex
 		msg_bytelen = string2hex(msg, (char *)HashTestVectors[cnt_i].msg);
 		hash_bytelen = asc2hex(tv_hash, (char *)HashTestVectors[cnt_i].hash);
-		YBCrypto_Hash(HashTestVectors[cnt_i].algo, msg, msg_bytelen, hased_digest);
+		YBCrypto_Hash(&HM, HashTestVectors[cnt_i].algo, msg, msg_bytelen, hased_digest);
 
 		if (memcmp(hased_digest, tv_hash, HASH_DIGEST))
 		{
@@ -227,9 +224,9 @@ int32_t Inner_API_HashFunction_SelfTest()
 			goto EXIT;
 		}
 
-		YBCrypto_Hash_Init(HashTestVectors[cnt_i].algo);
-		YBCrypto_Hash_Update(msg, msg_bytelen);
-		YBCrypto_Hash_Final(hased_digest);
+		YBCrypto_Hash_Init(&HM, HashTestVectors[cnt_i].algo);
+		YBCrypto_Hash_Update(&HM,msg, msg_bytelen);
+		YBCrypto_Hash_Final(&HM,hased_digest);
 
 		if (memcmp(hased_digest, tv_hash, HASH_DIGEST))
 		{
@@ -294,6 +291,7 @@ int32_t Inner_API_HMAC_SelfTest()
 	int32_t key_bytelen = 0x00;
 	int32_t msg_bytelen = 0x00;
 	int32_t mac_bytelen = 0x00;
+	HMACManager MM;
 
 	for (int32_t cnt_i = 0; cnt_i < sizeof(hmactestvector) / sizeof(HMAC_TV); cnt_i++)
 	{
@@ -307,16 +305,16 @@ int32_t Inner_API_HMAC_SelfTest()
 		msg_bytelen = asc2hex(msg, (char *)hmactestvector[cnt_i].msg);
 		mac_bytelen = asc2hex(tv_mac, (char *)hmactestvector[cnt_i].mac);
 
-		YBCrypto_HMAC(hmactestvector[cnt_i].algo, key, key_bytelen, msg, msg_bytelen, mac_digest);
+		YBCrypto_HMAC(&MM, hmactestvector[cnt_i].algo, key, key_bytelen, msg, msg_bytelen, mac_digest);
 		if (memcmp(mac_digest, tv_mac, HMAC_DIGEST))
 		{
 			ret = FAIL_KATSELF_TEST;
 			goto EXIT;
 		}
 
-		YBCrypto_HMAC_Init(hmactestvector[cnt_i].algo, key, key_bytelen);
-		YBCrypto_HMAC_Update(msg, msg_bytelen);
-		YBCrypto_HMAC_Final(mac_digest);
+		YBCrypto_HMAC_Init(&MM, hmactestvector[cnt_i].algo, key, key_bytelen);
+		YBCrypto_HMAC_Update(&MM, msg, msg_bytelen);
+		YBCrypto_HMAC_Final(&MM, mac_digest);
 		if (memcmp(mac_digest, tv_mac, HMAC_DIGEST))
 		{
 			ret = FAIL_KATSELF_TEST;
@@ -449,10 +447,7 @@ int32_t Inner_API_CTR_DRBG_SelfTest()
 	uint32_t KATLen = 0x00;
 	uint32_t returnedBitSize = 0x00;
 
-	// //TODO it will be deleted
-	// DRBGManager DRBG_DM = {
-	// 	0x00,
-	// };
+	DRBGManager DM;
 
 	for (int32_t cnt_i = 0; cnt_i < sizeof(CTR_DRBG_TestVectors) / sizeof(CTRDRBG_TV); cnt_i++)
 	{
@@ -470,10 +465,10 @@ int32_t Inner_API_CTR_DRBG_SelfTest()
 			addInput1Len = asc2hex(addInput1, (char *)CTR_DRBG_TestVectors[cnt_i].AdditionalInput1Str);
 			addInput2Len = asc2hex(addInput2, (char *)CTR_DRBG_TestVectors[cnt_i].AdditionalInput2Str);
 
-			YBCrypto_CTR_DRBG_Instantiate(CTR_DRBG_TestVectors[cnt_i].algo, CTR_DRBG_TestVectors[cnt_i].keybitlen, entropyInput, entropyInputLen, nonce1, nonce1Len, pString, pStringLen, USE_DF);
-			YBCrypto_CTR_DRBG_Generate(rand1, CTR_DRBG_TestVectors[cnt_i].returnedBitSize, NULL, 0, addInput1, addInput1Len, NO_PR);
-			YBCrypto_CTR_DRBG_Reseed(entropyReseed, entropyReseedLen, addInputReseed, addInputReseedLen);
-			YBCrypto_CTR_DRBG_Generate(rand2, CTR_DRBG_TestVectors[cnt_i].returnedBitSize, NULL, 0, NULL, 0, NO_PR);
+			YBCrypto_CTR_DRBG_Instantiate(&DM, CTR_DRBG_TestVectors[cnt_i].algo, CTR_DRBG_TestVectors[cnt_i].keybitlen, entropyInput, entropyInputLen, nonce1, nonce1Len, pString, pStringLen, USE_DF);
+			YBCrypto_CTR_DRBG_Generate(&DM, rand1, CTR_DRBG_TestVectors[cnt_i].returnedBitSize, NULL, 0, addInput1, addInput1Len, NO_PR);
+			YBCrypto_CTR_DRBG_Reseed(&DM, entropyReseed, entropyReseedLen, addInputReseed, addInputReseedLen);
+			YBCrypto_CTR_DRBG_Generate(&DM, rand2, CTR_DRBG_TestVectors[cnt_i].returnedBitSize, NULL, 0, NULL, 0, NO_PR);
 		}
 		else
 		{
@@ -482,9 +477,9 @@ int32_t Inner_API_CTR_DRBG_SelfTest()
 			addInput1Len = asc2hex(addInput1, (char *)CTR_DRBG_TestVectors[cnt_i].AdditionalInput1Str);
 			addInput2Len = asc2hex(addInput2, (char *)CTR_DRBG_TestVectors[cnt_i].AdditionalInput2Str);
 
-			YBCrypto_CTR_DRBG_Instantiate(CTR_DRBG_TestVectors[cnt_i].algo, CTR_DRBG_TestVectors[cnt_i].keybitlen, entropyInput, entropyInputLen, nonce1, nonce1Len, pString, pStringLen, USE_DF);
-			YBCrypto_CTR_DRBG_Generate(rand1, CTR_DRBG_TestVectors[cnt_i].returnedBitSize, entropyinputPR1, entropyinputPR1Len, addInput1, addInput1Len, USE_PR);
-			YBCrypto_CTR_DRBG_Generate(rand2, CTR_DRBG_TestVectors[cnt_i].returnedBitSize, entropyinputPR2, entropyinputPR2Len, addInput2, addInput2Len, USE_PR);
+			YBCrypto_CTR_DRBG_Instantiate(&DM, CTR_DRBG_TestVectors[cnt_i].algo, CTR_DRBG_TestVectors[cnt_i].keybitlen, entropyInput, entropyInputLen, nonce1, nonce1Len, pString, pStringLen, USE_DF);
+			YBCrypto_CTR_DRBG_Generate(&DM, rand1, CTR_DRBG_TestVectors[cnt_i].returnedBitSize, entropyinputPR1, entropyinputPR1Len, addInput1, addInput1Len, USE_PR);
+			YBCrypto_CTR_DRBG_Generate(&DM, rand2, CTR_DRBG_TestVectors[cnt_i].returnedBitSize, entropyinputPR2, entropyinputPR2Len, addInput2, addInput2Len, USE_PR);
 		}
 
 		if (memcmp(KAT, rand2, returnedBitSize / 8))
@@ -521,5 +516,7 @@ END:
 	nonce1Len = 0x00;
 	KATLen = 0x00;
 	returnedBitSize = 0x00;
+
+	YBCrypto_memset(&DM, 0x00, sizeof(DRBGManager));
 	return ret;
 }

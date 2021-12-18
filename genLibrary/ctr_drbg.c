@@ -13,7 +13,6 @@ extern int32_t YBCRYPTO_STATE;
 extern IS_ALG_TESTED algTestedFlag;
 extern int32_t Inner_API_GetState(void);
 extern void YBCrypto_ChangeState(int32_t newState);
-DRBGManager DM;
 
 static inline void print_parameterErroR(uint32_t error_flag)
 {
@@ -49,6 +48,7 @@ static inline void print_parameterErroR(uint32_t error_flag)
 }
 
 int32_t YBCrypto_CTR_DRBG_Instantiate(
+    DRBGManager *DM,
     uint32_t ALG, uint32_t key_bitlen,
     uint8_t *entropy_input, uint32_t entropy_bytelen,
     uint8_t *nonce, uint32_t nonce_bytelen,
@@ -91,7 +91,7 @@ int32_t YBCrypto_CTR_DRBG_Instantiate(
         return ret;
     }
 
-    YBCrypto_memset(&DM, 0x00, sizeof(DRBGManager));
+    YBCrypto_memset(DM, 0x00, sizeof(DRBGManager));
 
     //! check parameter type
     if (((ALG != ARIA) && (ALG != AES)) || ((derivation_function_flag != USE_DF) && (derivation_function_flag != NO_DF)))
@@ -177,13 +177,13 @@ INIT:
         }
 
         YBCrypto_ChangeState(YBCrtypto_CM_NOMAL_VM);
-        ret = CTR_DRBG_Instantiate(&DM, ALG, key_bitlen, ret_entropy, MAX_ENTROPY_LEN, nonce, nonce_bytelen, personalization_string, string_bytelen, derivation_function_flag);
+        ret = CTR_DRBG_Instantiate(DM, ALG, key_bitlen, ret_entropy, MAX_ENTROPY_LEN, nonce, nonce_bytelen, personalization_string, string_bytelen, derivation_function_flag);
         YBCrypto_memset(ret_entropy, 0x00, ret_entropylen);
         free(ret_entropy);
     }
     else // there is a entropy_input
     {
-        ret = CTR_DRBG_Instantiate(&DM, ALG, key_bitlen, entropy_input, entropy_bytelen, nonce, nonce_bytelen, personalization_string, string_bytelen, derivation_function_flag);
+        ret = CTR_DRBG_Instantiate(DM, ALG, key_bitlen, entropy_input, entropy_bytelen, nonce, nonce_bytelen, personalization_string, string_bytelen, derivation_function_flag);
     }
 
 EXIT:
@@ -197,7 +197,7 @@ EXIT:
         fprintf(stdout, "=*CM-> YBCrtypto_CM_CRITICAL_ERROR      =\n");
         fprintf(stdout, "=========================================\n\n");
         YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
-        YBCrypto_memset(&DM, 0x00, sizeof(DRBGManager));
+        YBCrypto_memset(DM, 0x00, sizeof(DRBGManager));
         Destroy_YBCrypto();
     }
 
@@ -205,6 +205,7 @@ EXIT:
 }
 
 int32_t YBCrypto_CTR_DRBG_Reseed(
+    DRBGManager *DM,
     uint8_t *entropy_input, uint32_t entropy_bytelen,
     uint8_t *additional_input, uint32_t add_bytelen)
 
@@ -253,14 +254,14 @@ int32_t YBCrypto_CTR_DRBG_Reseed(
         goto INIT;
     }
 
-    if ((entropy_input != NULL) && (((entropy_bytelen < DM.Key_bytelen)) || (entropy_bytelen > MAX_ENTROPY_LEN)))
+    if ((entropy_input != NULL) && (((entropy_bytelen < DM->Key_bytelen)) || (entropy_bytelen > MAX_ENTROPY_LEN)))
     {
         parameter_flag = FALSE;
         error_flag = ENTROPY_LEN_SMALL_MAX;
         goto INIT;
     }
 
-    if(DM.initialized_flag != DM_INITIALIZED_FLAG)
+    if(DM->initialized_flag != DM_INITIALIZED_FLAG)
     {
         parameter_flag = FALSE;
         error_flag = NOT_INITALIZED;
@@ -303,13 +304,13 @@ INIT:
         }
 
         YBCrypto_ChangeState(YBCrtypto_CM_NOMAL_VM);
-        ret = CTR_DRBG_Reseed(&DM, ret_entropy, MAX_ENTROPY_LEN, additional_input, add_bytelen);
+        ret = CTR_DRBG_Reseed(DM, ret_entropy, MAX_ENTROPY_LEN, additional_input, add_bytelen);
         YBCrypto_memset(ret_entropy, 0x00, ret_entropylen);
         free(ret_entropy);
     }
     else // there is a entropy_input
     {
-        ret = CTR_DRBG_Reseed(&DM, entropy_input, entropy_bytelen, additional_input, add_bytelen);
+        ret = CTR_DRBG_Reseed(DM, entropy_input, entropy_bytelen, additional_input, add_bytelen);
     }
 
 EXIT:
@@ -323,7 +324,7 @@ EXIT:
         fprintf(stdout, "=*CM-> YBCrtypto_CM_CRITICAL_ERROR      =\n");
         fprintf(stdout, "=========================================\n\n");
         YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
-        YBCrypto_memset(&DM, 0x00, sizeof(DRBGManager));
+        YBCrypto_memset(DM, 0x00, sizeof(DRBGManager));
         Destroy_YBCrypto();
     }
 
@@ -331,10 +332,11 @@ EXIT:
 }
 
 int32_t YBCrypto_CTR_DRBG_Generate(
-                          uint8_t *output, uint64_t requested_num_of_bits,
-                          uint8_t *entropy_input, uint32_t entropy_bytelen,
-                          uint8_t *addtional_input, uint32_t add_bytelen,
-                          uint32_t prediction_resistance_flag)
+    DRBGManager *DM,
+    uint8_t *output, uint64_t requested_num_of_bits,
+    uint8_t *entropy_input, uint32_t entropy_bytelen,
+    uint8_t *addtional_input, uint32_t add_bytelen,
+    uint32_t prediction_resistance_flag)
 {
     uint32_t ret = SUCCESS;
     uint32_t parameter_flag = TRUE;
@@ -394,14 +396,14 @@ int32_t YBCrypto_CTR_DRBG_Generate(
         goto INIT;
     }
 
-    if ((entropy_input != NULL) && (((entropy_bytelen < DM.Key_bytelen)) || (entropy_bytelen > MAX_ENTROPY_LEN)))
+    if ((entropy_input != NULL) && (((entropy_bytelen < DM->Key_bytelen)) || (entropy_bytelen > MAX_ENTROPY_LEN)))
     {
         parameter_flag = FALSE;
         error_flag = ENTROPY_LEN_SMALL_MAX;
         goto INIT;
     }
 
-    if(DM.initialized_flag != DM_INITIALIZED_FLAG)
+    if(DM->initialized_flag != DM_INITIALIZED_FLAG)
     {
         parameter_flag = FALSE;
         error_flag = NOT_INITALIZED;
@@ -444,13 +446,13 @@ INIT:
         }
 
         YBCrypto_ChangeState(YBCrtypto_CM_NOMAL_VM);
-        ret = CTR_DRBG_Generate(&DM, output, requested_num_of_bits, ret_entropy, MAX_ENTROPY_LEN, addtional_input, add_bytelen, prediction_resistance_flag);
+        ret = CTR_DRBG_Generate(DM, output, requested_num_of_bits, ret_entropy, MAX_ENTROPY_LEN, addtional_input, add_bytelen, prediction_resistance_flag);
         YBCrypto_memset(ret_entropy, 0x00, ret_entropylen);
         free(ret_entropy);
     }
     else // there is a entropy_input
     {
-        ret = CTR_DRBG_Generate(&DM, output, requested_num_of_bits, entropy_input, entropy_bytelen, addtional_input, add_bytelen, prediction_resistance_flag);
+        ret = CTR_DRBG_Generate(DM, output, requested_num_of_bits, entropy_input, entropy_bytelen, addtional_input, add_bytelen, prediction_resistance_flag);
     }
     
 
@@ -465,7 +467,7 @@ EXIT:
         fprintf(stdout, "=*CM-> YBCrtypto_CM_CRITICAL_ERROR      =\n");
         fprintf(stdout, "=========================================\n\n");
         YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
-        YBCrypto_memset(&DM, 0x00, sizeof(DRBGManager));
+        YBCrypto_memset(DM, 0x00, sizeof(DRBGManager));
         Destroy_YBCrypto();
     }
 

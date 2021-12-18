@@ -490,7 +490,7 @@ int32_t CTR_DRBG_Generate(DRBGManager *DM,
     else
     {
         //!CTR_DRBG_Reseed
-        if (YBCrypto_CTR_DRBG_Reseed(entropy_input, entropy_bytelen, addtional_input, add_bytelen) != SUCCESS)
+        if (YBCrypto_CTR_DRBG_Reseed(DM, entropy_input, entropy_bytelen, addtional_input, add_bytelen) != SUCCESS)
         {
             ret = FAIL_DRBG_INNER_FUNCTION;
             fprintf(stdout, "=*Location : YBCrypto_CTR_DRBG_Reseed   =\n");

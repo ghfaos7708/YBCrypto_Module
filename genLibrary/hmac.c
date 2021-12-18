@@ -5,9 +5,8 @@ extern int32_t YBCRYPTO_STATE;
 extern IS_ALG_TESTED algTestedFlag;
 extern int32_t Inner_API_GetState(void);
 extern void YBCrypto_ChangeState(int32_t newState);
-HMACManager MM;
 
-int32_t YBCrypto_HMAC(uint32_t ALG, const uint8_t *key, uint32_t key_bytelen, const uint8_t *msg, uint64_t msg_byteLen, uint8_t *mac)
+int32_t YBCrypto_HMAC(HMACManager* MM, uint32_t ALG, const uint8_t *key, uint32_t key_bytelen, const uint8_t *msg, uint64_t msg_byteLen, uint8_t *mac)
 {
 	int32_t ret = SUCCESS;
 	int32_t parameter_flag = TRUE;
@@ -80,26 +79,27 @@ INIT:
 	}
 
 	//! Generating MAC
-	ret = HMAC_init(&MM, ALG, key, key_bytelen);
+	ret = HMAC_init(MM, ALG, key, key_bytelen);
 	if (ret != SUCCESS)
 		goto EXIT;
-	ret = HMAC_update(&MM, msg, msg_byteLen);
+	ret = HMAC_update(MM, msg, msg_byteLen);
 	if (ret != SUCCESS)
 		goto EXIT;
-	ret = HMAC_final(&MM, mac);
+	ret = HMAC_final(MM, mac);
 	if (ret != SUCCESS)
 		goto EXIT;
 
 EXIT:
 	if (ret != SUCCESS)
+	{}
 		fprintf(stdout, "=*Location : YBCrypto_HMAC              =\n");
 	parameter_flag = 0x00;
 	state = 0x00;
-	YBCrypto_memset(&MM, 0x00, sizeof(HashManager));
+	YBCrypto_memset(MM, 0x00, sizeof(HashManager));
 	return ret;
 }
 
-int32_t YBCrypto_HMAC_Init(uint32_t ALG, const uint8_t *key, uint32_t key_bytelen)
+int32_t YBCrypto_HMAC_Init(HMACManager* MM, uint32_t ALG, const uint8_t *key, uint32_t key_bytelen)
 {
 	int32_t ret = SUCCESS;
 	int32_t parameter_flag = TRUE;
@@ -167,19 +167,22 @@ INIT:
 	}
 
 	//! Generating MAC
-	ret = HMAC_init(&MM, ALG, key, key_bytelen);
+	ret = HMAC_init(MM, ALG, key, key_bytelen);
 	if (ret != SUCCESS)
 		goto EXIT;
 
 EXIT:
 	if (ret != SUCCESS)
+	{
 		fprintf(stdout, "=*Location : YBCrypto_HMAC_Init         =\n");
+		YBCrypto_memset(MM, 0x00, sizeof(HMACManager));
+	}
 	parameter_flag = 0x00;
 	state = 0x00;
 	return ret;
 }
 
-int32_t YBCrypto_HMAC_Update(const uint8_t *msg, uint64_t msg_byteLen)
+int32_t YBCrypto_HMAC_Update(HMACManager* MM, const uint8_t *msg, uint64_t msg_byteLen)
 {
 	int32_t ret = SUCCESS;
 	int32_t parameter_flag = TRUE;
@@ -242,19 +245,22 @@ INIT:
 	}
 
 	//! Generating MAC
-	ret = HMAC_update(&MM, msg, msg_byteLen);
+	ret = HMAC_update(MM, msg, msg_byteLen);
 	if (ret != SUCCESS)
 		goto EXIT;
 
 EXIT:
 	if (ret != SUCCESS)
+	{
 		fprintf(stdout, "=*Location : YBCrypto_HMAC_Update       =\n");
+		YBCrypto_memset(MM, 0x00, sizeof(HMACManager));
+	}
 	parameter_flag = 0x00;
 	state = 0x00;
 	return ret;
 }
 
-int32_t YBCrypto_HMAC_Final(uint8_t *mac)
+int32_t YBCrypto_HMAC_Final(HMACManager* MM, uint8_t *mac)
 {
 	int32_t ret = SUCCESS;
 	int32_t parameter_flag = TRUE;
@@ -317,7 +323,7 @@ INIT:
 	}
 
 	//! Generating MAC
-	ret = HMAC_final(&MM, mac);
+	ret = HMAC_final(MM, mac);
 	if (ret != SUCCESS)
 		goto EXIT;
 
@@ -326,11 +332,11 @@ EXIT:
 		fprintf(stdout, "=*Location : YBCrypto_HMAC_Final        =\n");
 	parameter_flag = 0x00;
 	state = 0x00;
-	YBCrypto_memset(&MM, 0x00, sizeof(HashManager));
+	YBCrypto_memset(MM, 0x00, sizeof(HashManager));
 	return ret;
 }
 
-int32_t YBCrypto_HMAC_Clear(void)
+int32_t YBCrypto_HMAC_Clear(HMACManager* MM)
 {
 	int32_t ret = SUCCESS;
 	int32_t state = Inner_API_GetState();
@@ -367,6 +373,6 @@ int32_t YBCrypto_HMAC_Clear(void)
 	}
 
 	//! Zero Manager
-	YBCrypto_memset(&MM, 0x00, sizeof(HMACManager));
+	YBCrypto_memset(MM, 0x00, sizeof(HMACManager));
 	return ret;
 }

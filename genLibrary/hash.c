@@ -5,6 +5,7 @@ extern int32_t YBCRYPTO_STATE;
 extern IS_ALG_TESTED algTestedFlag;
 extern int32_t Inner_API_GetState(void);
 extern void YBCrypto_ChangeState(int32_t newState);
+// HashManager HM;
 
 int32_t YBCrypto_Hash(HashManager* HM, uint32_t ALG, const uint8_t *msg, uint64_t msg_byteLen, uint8_t *md)
 {
@@ -186,13 +187,13 @@ INIT:
     switch (ALG)
     {
     case SHA256:
-        ret = SHA256_init(&HM);
+        ret = SHA256_init(HM);
         if (ret != SUCCESS)
             goto EXIT;
         break;
 
     case SHA3:
-        ret = SHA3_init(&HM);
+        ret = SHA3_init(HM);
         if (ret != SUCCESS)
             goto EXIT;
         break;
@@ -205,13 +206,16 @@ INIT:
 
 EXIT:
     if (ret != SUCCESS)
+    {
         fprintf(stdout, "=*Location : YBCrypto_Hash_Init         =\n");
+        YBCrypto_memset(HM, 0x00, sizeof(HashManager));
+    }
     parameter_flag = 0x00;
     state = 0x00;
     return ret;
 }
 
-int32_t YBCrypto_Hash_Update(const uint8_t *msg, uint64_t msg_byteLen)
+int32_t YBCrypto_Hash_Update(HashManager* HM, const uint8_t *msg, uint64_t msg_byteLen)
 {
     int32_t ret = SUCCESS;
     int32_t parameter_flag = TRUE;
@@ -274,16 +278,16 @@ INIT:
     }
 
     //! Hashing
-    switch (HM.algo)
+    switch (HM->algo)
     {
     case SHA256:
-        ret = SHA256_update(&HM, msg, msg_byteLen);
+        ret = SHA256_update(HM, msg, msg_byteLen);
         if (ret != SUCCESS)
             goto EXIT;
         break;
 
     case SHA3:
-        ret = SHA3_update(&HM, msg, msg_byteLen);
+        ret = SHA3_update(HM, msg, msg_byteLen);
         if (ret != SUCCESS)
             goto EXIT;
         break;
@@ -296,13 +300,16 @@ INIT:
 
 EXIT:
     if (ret != SUCCESS)
+    {
         fprintf(stdout, "=*Location : YBCrypto_Hash_Update       =\n");
+        YBCrypto_memset(HM, 0x00, sizeof(HashManager));
+    }
     parameter_flag = 0x00;
     state = 0x00;
     return ret;
 }
 
-int32_t YBCrypto_Hash_Final(uint8_t *md)
+int32_t YBCrypto_Hash_Final(HashManager* HM, uint8_t *md)
 {
     int32_t ret = SUCCESS;
     int32_t parameter_flag = TRUE;
@@ -365,16 +372,16 @@ INIT:
     }
 
     //! Hashing
-    switch (HM.algo)
+    switch (HM->algo)
     {
     case SHA256:
-        ret = SHA256_final(&HM, md);
+        ret = SHA256_final(HM, md);
         if (ret != SUCCESS)
             goto EXIT;
         break;
 
     case SHA3:
-        ret = SHA3_final(&HM, md);
+        ret = SHA3_final(HM, md);
         if (ret != SUCCESS)
             goto EXIT;
         break;
@@ -390,11 +397,11 @@ EXIT:
         fprintf(stdout, "=*Location : YBCrypto_Hash_Final        =\n");
     parameter_flag = 0x00;
     state = 0x00;
-    YBCrypto_memset(&HM, 0x00, sizeof(HashManager));
+    YBCrypto_memset(HM, 0x00, sizeof(HashManager));
     return ret;
 }
 
-int32_t YBCrypto_Hash_Clear(void)
+int32_t YBCrypto_Hash_Clear(HashManager* HM)
 {
     int32_t ret = SUCCESS;
     int32_t state = Inner_API_GetState();
@@ -431,7 +438,7 @@ int32_t YBCrypto_Hash_Clear(void)
     }
 
     //! Zero Manager
-    YBCrypto_memset(&HM, 0x00, sizeof(HashManager));
+    YBCrypto_memset(HM, 0x00, sizeof(HashManager));
     return ret;
 }
 //EOF

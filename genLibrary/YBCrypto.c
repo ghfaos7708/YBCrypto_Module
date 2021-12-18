@@ -4,10 +4,6 @@
 
 int32_t YBCRYPTO_STATE = YBCrtypto_CM_LOAD;
 IS_ALG_TESTED algTestedFlag;
-extern CipherManager CM;
-extern HashManager HM;
-extern HMACManager MM;
-extern DRBGManager DM;
 
 int32_t Inner_API_GetState(void)
 {
@@ -18,10 +14,6 @@ static int32_t Inner_API_PreSelfTest(void)
 	int32_t ret = SUCCESS;
 
 	YBCrypto_memset(&algTestedFlag, 0x00, sizeof(IS_ALG_TESTED));
-	YBCrypto_memset(&CM, 0x00, sizeof(CipherManager));
-	YBCrypto_memset(&HM, 0x00, sizeof(HashManager));
-	YBCrypto_memset(&MM, 0x00, sizeof(HMACManager));
-	YBCrypto_memset(&DM, 0x00, sizeof(DRBGManager));
 
 	algTestedFlag.isBlockCipherTested = FAIL_NOT_PERFORM_KATSELFTEST;
 	algTestedFlag.isHashTested = FAIL_NOT_PERFORM_KATSELFTEST;
@@ -243,10 +235,6 @@ EXIT:
 void Destroy_YBCrypto(void)
 {
 	YBCrypto_memset(&algTestedFlag, 0x00, sizeof(IS_ALG_TESTED));
-	YBCrypto_memset(&CM, 0x00, sizeof(CipherManager));
-	YBCrypto_memset(&HM, 0x00, sizeof(HashManager));
-	YBCrypto_memset(&MM, 0x00, sizeof(HMACManager));
-	YBCrypto_memset(&DM, 0x00, sizeof(DRBGManager));
 
 	if (Inner_API_GetState() == YBCrtypto_CM_CRITICAL_ERROR)
 	{
