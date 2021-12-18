@@ -20,3 +20,4 @@ If you have any examples that you can add or anything you think should be improv
 |Block Cipher|ARIA/AES|128/192/256|
 |HashFunction|SHA/SHA3|256|
 |Message Authentication |HMAC|SHA256/SHA3_256|
+|Deterministic Random Bit Generator |CTR_DRBG|ARIA|
