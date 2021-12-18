@@ -16,7 +16,7 @@ If you have any examples that you can add or anything you think should be improv
 ## Structure
 
 |Chapter|Algorithm|Security|
-|------|---|---|
+|:-----:|:---:|:---:|
 |Block Cipher|ARIA/AES|128/192/256|
 |HashFunction|SHA/SHA3|256|
 |Message Authentication |HMAC|SHA256/SHA3_256|
