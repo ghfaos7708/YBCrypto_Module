@@ -91,8 +91,9 @@ INIT:
 
 EXIT:
 	if (ret != SUCCESS)
-	{}
+	{
 		fprintf(stdout, "=*Location : YBCrypto_HMAC              =\n");
+	}
 	parameter_flag = 0x00;
 	state = 0x00;
 	YBCrypto_memset(MM, 0x00, sizeof(HashManager));
