@@ -21,3 +21,7 @@ If you have any examples that you can add or anything you think should be improv
 |HashFunction|SHA/SHA3|256|
 |Message Authentication |HMAC|SHA256/SHA3_256|
 |Deterministic Random Bit Generator |CTR_DRBG|ARIA|
+
+There are 4 folders (genLibrary, genMAC, test_YBCrypto, cavp_YBCrypto) for each operating system. This code can be basically run in macOS, Linux, and Windows environments. In the case of macOS, it works not only on intel-core but also on apple-silicon based M1 chips. Code for Linux environment works on Debian buster version and Ubuntu (18/20.04). In particular, it can be built on the ARM Cortex-A 50-/70- series and can also be run on NVIDIA's Jetson board with ARMv8.2. For windows, this code provides the VS (Visual Studio) version.
+
+- genLibrary is all about this little project. Create a dynamic library of YBCrypto.so/dylib/dll.
