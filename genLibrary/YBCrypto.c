@@ -1,6 +1,7 @@
 #include "YBCrypto.h"
 #include "KAT_test.h"
 #include "entropy.h"
+#include "integrity.h"
 
 int32_t YBCRYPTO_STATE = YBCrtypto_CM_LOAD;
 IS_ALG_TESTED algTestedFlag;
@@ -9,6 +10,7 @@ int32_t Inner_API_GetState(void)
 {
 	return YBCRYPTO_STATE;
 }
+
 static int32_t Inner_API_PreSelfTest(void)
 {
 	int32_t ret = SUCCESS;
@@ -35,7 +37,8 @@ static int32_t Inner_API_PreSelfTest(void)
 		fprintf(stdout, "=*Location : Inner_API_PreSelfTest(Ent) =\n");
 		goto EXIT;
 	}
-	//TODO Integrity Test
+	
+	ret = Inner_API_integrityTest();
 	if (ret != SUCCESS)
 	{
 		fprintf(stdout, "=*Location : Inner_API_PreSelfTest(MAC) =\n");
@@ -85,7 +88,7 @@ void YBCrypto_ChangeState(int32_t newState)
 }
 
 
-int32_t YBCrypto_PreSelfTest(void)
+int32_t __attribute__ ((visibility("default"))) YBCrypto_PreSelfTest(void)
 {
 	int32_t ret = SUCCESS;
 	int32_t state = Inner_API_GetState();
@@ -125,13 +128,13 @@ int32_t YBCrypto_PreSelfTest(void)
 
 	fprintf(stdout, "=*--> SUCESS!!!!!!                      =\n");
 	fprintf(stdout, "=*CM-> YBCrtypto_CM_NOMAL_VM            =\n");
-	fprintf(stdout, "=========================================\n");
+	fprintf(stdout, "=========================================\n\n");
 	YBCrypto_ChangeState(YBCrtypto_CM_NOMAL_VM);
 
 	return ret;
 }
 
-int32_t YBCrypto_GetState(void)
+int32_t __attribute__ ((visibility("default"))) YBCrypto_GetState(void)
 {
 	int32_t state = Inner_API_GetState();
 
@@ -147,7 +150,7 @@ int32_t YBCrypto_GetState(void)
 	return state;
 }
 
-void YBCrypto_memset(void *pointer, int32_t value, int32_t size)
+void __attribute__ ((visibility("default"))) YBCrypto_memset(void *pointer, int32_t value, int32_t size)
 {
 	if (pointer == NULL)
 	{
@@ -163,7 +166,7 @@ void YBCrypto_memset(void *pointer, int32_t value, int32_t size)
 	}
 }
 
-void YBCrypto_ModuleInfo(void)
+void __attribute__ ((visibility("default"))) YBCrypto_ModuleInfo(void)
 {
 	if (Inner_API_GetState() != YBCrtypto_CM_NOMAL_VM)
 	{
@@ -185,7 +188,7 @@ void YBCrypto_ModuleInfo(void)
 }
 
 //! constructor model
-void Load_YBCrypto(void)
+void __attribute__((constructor)) Load_YBCrypto(void)
 {
 	int32_t ret = SUCCESS;
 
@@ -232,7 +235,7 @@ EXIT:
 }
 
 //! destructor model
-void Destroy_YBCrypto(void)
+void __attribute__((destructor)) Destroy_YBCrypto(void)
 {
 	YBCrypto_memset(&algTestedFlag, 0x00, sizeof(IS_ALG_TESTED));
 

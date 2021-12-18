@@ -7,7 +7,7 @@ extern int32_t Inner_API_GetState(void);
 extern void YBCrypto_ChangeState(int32_t newState);
 // HashManager HM;
 
-int32_t YBCrypto_Hash(HashManager* HM, uint32_t ALG, const uint8_t *msg, uint64_t msg_byteLen, uint8_t *md)
+int32_t __attribute__ ((visibility("default"))) YBCrypto_Hash(HashManager* HM, uint32_t ALG, const uint8_t *msg, uint64_t msg_byteLen, uint8_t *md)
 {
     int32_t ret = SUCCESS;
     int32_t parameter_flag = TRUE;
@@ -24,6 +24,7 @@ int32_t YBCrypto_Hash(HashManager* HM, uint32_t ALG, const uint8_t *msg, uint64_
         fprintf(stdout, "=========================================\n\n");
 
         ret = FAIL_INVALID_MODULE_STATE;
+        YBCrypto_memset(HM, 0x00, sizeof(HashManager));
         YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
         Destroy_YBCrypto();
         return ret;
@@ -39,6 +40,7 @@ int32_t YBCrypto_Hash(HashManager* HM, uint32_t ALG, const uint8_t *msg, uint64_
         fprintf(stdout, "=========================================\n\n");
 
         ret = FAIL_NOT_PERFORM_KATSELFTEST;
+        YBCrypto_memset(HM, 0x00, sizeof(HashManager));
         YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
         Destroy_YBCrypto();
         return ret;
@@ -121,7 +123,7 @@ EXIT:
     return ret;
 }
 
-int32_t YBCrypto_Hash_Init(HashManager* HM, uint32_t ALG)
+int32_t __attribute__ ((visibility("default"))) YBCrypto_Hash_Init(HashManager* HM, uint32_t ALG)
 {
     int32_t ret = SUCCESS;
     int32_t parameter_flag = TRUE;
@@ -138,6 +140,7 @@ int32_t YBCrypto_Hash_Init(HashManager* HM, uint32_t ALG)
         fprintf(stdout, "=========================================\n\n");
 
         ret = FAIL_INVALID_MODULE_STATE;
+        YBCrypto_memset(HM, 0x00, sizeof(HashManager));
         YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
         Destroy_YBCrypto();
         return ret;
@@ -153,6 +156,7 @@ int32_t YBCrypto_Hash_Init(HashManager* HM, uint32_t ALG)
         fprintf(stdout, "=========================================\n\n");
 
         ret = FAIL_NOT_PERFORM_KATSELFTEST;
+        YBCrypto_memset(HM, 0x00, sizeof(HashManager));
         YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
         Destroy_YBCrypto();
         return ret;
@@ -179,6 +183,7 @@ INIT:
         fprintf(stdout, "=========================================\n\n");
 
         YBCrypto_ChangeState(YBCrtypto_CM_NOMAL_VM);
+        YBCrypto_memset(HM, 0x00, sizeof(HashManager));
         ret = FAIL_INVALID_INPUT_DATA;
         return ret;
     }
@@ -215,7 +220,7 @@ EXIT:
     return ret;
 }
 
-int32_t YBCrypto_Hash_Update(HashManager* HM, const uint8_t *msg, uint64_t msg_byteLen)
+int32_t __attribute__ ((visibility("default"))) YBCrypto_Hash_Update(HashManager* HM, const uint8_t *msg, uint64_t msg_byteLen)
 {
     int32_t ret = SUCCESS;
     int32_t parameter_flag = TRUE;
@@ -232,6 +237,7 @@ int32_t YBCrypto_Hash_Update(HashManager* HM, const uint8_t *msg, uint64_t msg_b
         fprintf(stdout, "=========================================\n\n");
 
         ret = FAIL_INVALID_MODULE_STATE;
+        YBCrypto_memset(HM, 0x00, sizeof(HashManager));
         YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
         Destroy_YBCrypto();
         return ret;
@@ -247,6 +253,7 @@ int32_t YBCrypto_Hash_Update(HashManager* HM, const uint8_t *msg, uint64_t msg_b
         fprintf(stdout, "=========================================\n\n");
 
         ret = FAIL_NOT_PERFORM_KATSELFTEST;
+        YBCrypto_memset(HM, 0x00, sizeof(HashManager));
         YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
         Destroy_YBCrypto();
         return ret;
@@ -309,7 +316,7 @@ EXIT:
     return ret;
 }
 
-int32_t YBCrypto_Hash_Final(HashManager* HM, uint8_t *md)
+int32_t __attribute__ ((visibility("default"))) YBCrypto_Hash_Final(HashManager* HM, uint8_t *md)
 {
     int32_t ret = SUCCESS;
     int32_t parameter_flag = TRUE;
@@ -326,6 +333,7 @@ int32_t YBCrypto_Hash_Final(HashManager* HM, uint8_t *md)
         fprintf(stdout, "=========================================\n\n");
 
         ret = FAIL_INVALID_MODULE_STATE;
+        YBCrypto_memset(HM, 0x00, sizeof(HashManager));
         YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
         Destroy_YBCrypto();
         return ret;
@@ -341,6 +349,7 @@ int32_t YBCrypto_Hash_Final(HashManager* HM, uint8_t *md)
         fprintf(stdout, "=========================================\n\n");
 
         ret = FAIL_NOT_PERFORM_KATSELFTEST;
+        YBCrypto_memset(HM, 0x00, sizeof(HashManager));
         YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
         Destroy_YBCrypto();
         return ret;
@@ -401,7 +410,7 @@ EXIT:
     return ret;
 }
 
-int32_t YBCrypto_Hash_Clear(HashManager* HM)
+int32_t __attribute__ ((visibility("default"))) YBCrypto_Hash_Clear(HashManager* HM)
 {
     int32_t ret = SUCCESS;
     int32_t state = Inner_API_GetState();
@@ -417,6 +426,7 @@ int32_t YBCrypto_Hash_Clear(HashManager* HM)
         fprintf(stdout, "=========================================\n\n");
 
         ret = FAIL_INVALID_MODULE_STATE;
+        YBCrypto_memset(HM, 0x00, sizeof(HashManager));
         YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
         Destroy_YBCrypto();
         return ret;
@@ -432,6 +442,7 @@ int32_t YBCrypto_Hash_Clear(HashManager* HM)
         fprintf(stdout, "=========================================\n\n");
 
         ret = FAIL_NOT_PERFORM_KATSELFTEST;
+        YBCrypto_memset(HM, 0x00, sizeof(HashManager));
         YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
         Destroy_YBCrypto();
         return ret;

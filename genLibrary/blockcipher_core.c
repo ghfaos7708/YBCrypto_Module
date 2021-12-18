@@ -2375,7 +2375,7 @@ int32_t AES_set_encrypt_key(const uint8_t *userKey, int bits, AES_KEY *key)
             rk[7] = rk[3] ^ rk[6];
             if (++i == 10)
             {
-                return 0;
+                return SUCCESS;
             }
             rk += 4;
         }
@@ -2398,7 +2398,7 @@ int32_t AES_set_encrypt_key(const uint8_t *userKey, int bits, AES_KEY *key)
             rk[9] = rk[3] ^ rk[8];
             if (++i == 8)
             {
-                return 0;
+                return SUCCESS;
             }
             rk[10] = rk[4] ^ rk[9];
             rk[11] = rk[5] ^ rk[10];
@@ -2423,7 +2423,7 @@ int32_t AES_set_encrypt_key(const uint8_t *userKey, int bits, AES_KEY *key)
             rk[11] = rk[3] ^ rk[10];
             if (++i == 7)
             {
-                return 0;
+                return SUCCESS;
             }
             temp = rk[11];
             rk[12] = rk[4] ^

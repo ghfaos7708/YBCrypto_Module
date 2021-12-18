@@ -6,7 +6,7 @@ extern IS_ALG_TESTED algTestedFlag;
 extern int32_t Inner_API_GetState(void);
 extern void YBCrypto_ChangeState(int32_t newState);
 
-int32_t YBCrypto_HMAC(HMACManager* MM, uint32_t ALG, const uint8_t *key, uint32_t key_bytelen, const uint8_t *msg, uint64_t msg_byteLen, uint8_t *mac)
+int32_t __attribute__ ((visibility("default"))) YBCrypto_HMAC(HMACManager* MM, uint32_t ALG, const uint8_t *key, uint32_t key_bytelen, const uint8_t *msg, uint64_t msg_byteLen, uint8_t *mac)
 {
 	int32_t ret = SUCCESS;
 	int32_t parameter_flag = TRUE;
@@ -23,6 +23,7 @@ int32_t YBCrypto_HMAC(HMACManager* MM, uint32_t ALG, const uint8_t *key, uint32_
 		fprintf(stdout, "=========================================\n\n");
 
 		ret = FAIL_INVALID_MODULE_STATE;
+		YBCrypto_memset(MM, 0x00, sizeof(HMACManager));
 		YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
 		Destroy_YBCrypto();
 		return ret;
@@ -38,6 +39,7 @@ int32_t YBCrypto_HMAC(HMACManager* MM, uint32_t ALG, const uint8_t *key, uint32_
 		fprintf(stdout, "=========================================\n\n");
 
 		ret = FAIL_NOT_PERFORM_KATSELFTEST;
+		YBCrypto_memset(MM, 0x00, sizeof(HMACManager));
 		YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
 		Destroy_YBCrypto();
 		return ret;
@@ -74,6 +76,7 @@ INIT:
 		fprintf(stdout, "=========================================\n\n");
 
 		YBCrypto_ChangeState(YBCrtypto_CM_NOMAL_VM);
+		YBCrypto_memset(MM, 0x00, sizeof(HMACManager));
 		ret = FAIL_INVALID_INPUT_DATA;
 		return ret;
 	}
@@ -100,7 +103,7 @@ EXIT:
 	return ret;
 }
 
-int32_t YBCrypto_HMAC_Init(HMACManager* MM, uint32_t ALG, const uint8_t *key, uint32_t key_bytelen)
+int32_t __attribute__ ((visibility("default"))) YBCrypto_HMAC_Init(HMACManager* MM, uint32_t ALG, const uint8_t *key, uint32_t key_bytelen)
 {
 	int32_t ret = SUCCESS;
 	int32_t parameter_flag = TRUE;
@@ -117,6 +120,7 @@ int32_t YBCrypto_HMAC_Init(HMACManager* MM, uint32_t ALG, const uint8_t *key, ui
 		fprintf(stdout, "=========================================\n\n");
 
 		ret = FAIL_INVALID_MODULE_STATE;
+		YBCrypto_memset(MM, 0x00, sizeof(HMACManager));
 		YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
 		Destroy_YBCrypto();
 		return ret;
@@ -132,6 +136,7 @@ int32_t YBCrypto_HMAC_Init(HMACManager* MM, uint32_t ALG, const uint8_t *key, ui
 		fprintf(stdout, "=========================================\n\n");
 
 		ret = FAIL_NOT_PERFORM_KATSELFTEST;
+		YBCrypto_memset(MM, 0x00, sizeof(HMACManager));
 		YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
 		Destroy_YBCrypto();
 		return ret;
@@ -163,6 +168,7 @@ INIT:
 		fprintf(stdout, "=========================================\n\n");
 
 		YBCrypto_ChangeState(YBCrtypto_CM_NOMAL_VM);
+		YBCrypto_memset(MM, 0x00, sizeof(HMACManager));
 		ret = FAIL_INVALID_INPUT_DATA;
 		return ret;
 	}
@@ -183,7 +189,7 @@ EXIT:
 	return ret;
 }
 
-int32_t YBCrypto_HMAC_Update(HMACManager* MM, const uint8_t *msg, uint64_t msg_byteLen)
+int32_t __attribute__ ((visibility("default"))) YBCrypto_HMAC_Update(HMACManager* MM, const uint8_t *msg, uint64_t msg_byteLen)
 {
 	int32_t ret = SUCCESS;
 	int32_t parameter_flag = TRUE;
@@ -201,6 +207,7 @@ int32_t YBCrypto_HMAC_Update(HMACManager* MM, const uint8_t *msg, uint64_t msg_b
 
 		ret = FAIL_INVALID_MODULE_STATE;
 		YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
+		YBCrypto_memset(MM, 0x00, sizeof(HMACManager));
 		Destroy_YBCrypto();
 		return ret;
 	}
@@ -216,6 +223,7 @@ int32_t YBCrypto_HMAC_Update(HMACManager* MM, const uint8_t *msg, uint64_t msg_b
 
 		ret = FAIL_NOT_PERFORM_KATSELFTEST;
 		YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
+		YBCrypto_memset(MM, 0x00, sizeof(HMACManager));
 		Destroy_YBCrypto();
 		return ret;
 	}
@@ -261,7 +269,7 @@ EXIT:
 	return ret;
 }
 
-int32_t YBCrypto_HMAC_Final(HMACManager* MM, uint8_t *mac)
+int32_t __attribute__ ((visibility("default"))) YBCrypto_HMAC_Final(HMACManager* MM, uint8_t *mac)
 {
 	int32_t ret = SUCCESS;
 	int32_t parameter_flag = TRUE;
@@ -278,6 +286,7 @@ int32_t YBCrypto_HMAC_Final(HMACManager* MM, uint8_t *mac)
 		fprintf(stdout, "=========================================\n\n");
 
 		ret = FAIL_INVALID_MODULE_STATE;
+		YBCrypto_memset(MM, 0x00, sizeof(HMACManager));
 		YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
 		Destroy_YBCrypto();
 		return ret;
@@ -293,6 +302,7 @@ int32_t YBCrypto_HMAC_Final(HMACManager* MM, uint8_t *mac)
 		fprintf(stdout, "=========================================\n\n");
 
 		ret = FAIL_NOT_PERFORM_KATSELFTEST;
+		YBCrypto_memset(MM, 0x00, sizeof(HMACManager));
 		YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
 		Destroy_YBCrypto();
 		return ret;
@@ -337,7 +347,7 @@ EXIT:
 	return ret;
 }
 
-int32_t YBCrypto_HMAC_Clear(HMACManager* MM)
+int32_t __attribute__ ((visibility("default"))) YBCrypto_HMAC_Clear(HMACManager* MM)
 {
 	int32_t ret = SUCCESS;
 	int32_t state = Inner_API_GetState();
@@ -354,6 +364,7 @@ int32_t YBCrypto_HMAC_Clear(HMACManager* MM)
 
 		ret = FAIL_INVALID_MODULE_STATE;
 		YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
+		YBCrypto_memset(MM, 0x00, sizeof(HMACManager));
 		Destroy_YBCrypto();
 		return ret;
 	}
@@ -369,6 +380,7 @@ int32_t YBCrypto_HMAC_Clear(HMACManager* MM)
 
 		ret = FAIL_NOT_PERFORM_KATSELFTEST;
 		YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
+		YBCrypto_memset(MM, 0x00, sizeof(HMACManager));
 		Destroy_YBCrypto();
 		return ret;
 	}

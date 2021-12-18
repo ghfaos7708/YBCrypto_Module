@@ -6,7 +6,7 @@ extern IS_ALG_TESTED algTestedFlag;
 extern int32_t Inner_API_GetState(void);
 extern void YBCrypto_ChangeState(int32_t newState);
 
-int32_t YBCrypto_BlockCipher(CipherManager* CM, uint32_t ALG, int32_t MODE, int32_t direct, const uint8_t *user_key, uint32_t key_bitlen, const uint8_t *in, uint64_t in_byteLen, const uint8_t *iv, uint8_t *out)
+int32_t __attribute__ ((visibility("default"))) YBCrypto_BlockCipher(CipherManager* CM, uint32_t ALG, int32_t MODE, int32_t direct, const uint8_t *user_key, uint32_t key_bitlen, const uint8_t *in, uint64_t in_byteLen, const uint8_t *iv, uint8_t *out)
 {
     int32_t ret = SUCCESS;
     int32_t parameter_flag = TRUE;
@@ -25,6 +25,7 @@ int32_t YBCrypto_BlockCipher(CipherManager* CM, uint32_t ALG, int32_t MODE, int3
         fprintf(stdout, "=========================================\n\n");
 
         ret = FAIL_INVALID_MODULE_STATE;
+        YBCrypto_memset(CM, 0x00, sizeof(CipherManager));
         YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
         Destroy_YBCrypto();
         return ret;
@@ -40,6 +41,7 @@ int32_t YBCrypto_BlockCipher(CipherManager* CM, uint32_t ALG, int32_t MODE, int3
         fprintf(stdout, "=========================================\n\n");
 
         ret = FAIL_NOT_PERFORM_KATSELFTEST;
+        YBCrypto_memset(CM, 0x00, sizeof(CipherManager));
         YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
         Destroy_YBCrypto();
         return ret;
@@ -69,6 +71,7 @@ int32_t YBCrypto_BlockCipher(CipherManager* CM, uint32_t ALG, int32_t MODE, int3
     }
 
 INIT:
+
     if (parameter_flag != TRUE)
     {
         YBCrypto_ChangeState(YBCrtypto_CM_NORMAL_ERROR);
@@ -80,7 +83,7 @@ INIT:
         fprintf(stdout, "=*CM-> YBCrypto_CM_NOMAL_ERROR          =\n");
         fprintf(stdout, "=*CM-> YBCrtypto_CM_NOMAL_VM            =\n");
         fprintf(stdout, "=========================================\n\n");
-
+        YBCrypto_memset(CM, 0x00, sizeof(CipherManager));
         YBCrypto_ChangeState(YBCrtypto_CM_NOMAL_VM);
         ret = FAIL_INVALID_INPUT_DATA;
         return ret;
@@ -151,7 +154,7 @@ EXIT:
     return ret;
 }
 
-int32_t YBCrypto_BlockCipher_Init(CipherManager* CM, uint32_t ALG, int32_t MODE, int32_t direct, const uint8_t *user_key, uint32_t key_bitlen, const uint8_t *iv)
+int32_t __attribute__ ((visibility("default"))) YBCrypto_BlockCipher_Init(CipherManager* CM, uint32_t ALG, int32_t MODE, int32_t direct, const uint8_t *user_key, uint32_t key_bitlen, const uint8_t *iv)
 {
     int32_t ret = SUCCESS;
     int32_t parameter_flag = TRUE;
@@ -168,6 +171,7 @@ int32_t YBCrypto_BlockCipher_Init(CipherManager* CM, uint32_t ALG, int32_t MODE,
         fprintf(stdout, "=========================================\n\n");
 
         ret = FAIL_INVALID_MODULE_STATE;
+        YBCrypto_memset(CM, 0x00, sizeof(CipherManager));
         YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
         Destroy_YBCrypto();
         return ret;
@@ -183,6 +187,7 @@ int32_t YBCrypto_BlockCipher_Init(CipherManager* CM, uint32_t ALG, int32_t MODE,
         fprintf(stdout, "=========================================\n\n");
 
         ret = FAIL_NOT_PERFORM_KATSELFTEST;
+        YBCrypto_memset(CM, 0x00, sizeof(CipherManager));
         YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
         Destroy_YBCrypto();
         return ret;
@@ -272,7 +277,7 @@ EXIT:
     return ret;
 }
 
-int32_t YBCrypto_BlockCipher_Update(CipherManager* CM, const uint8_t *in, uint64_t in_byteLen, uint8_t *out, uint64_t *out_byteLen)
+int32_t __attribute__ ((visibility("default"))) YBCrypto_BlockCipher_Update(CipherManager* CM, const uint8_t *in, uint64_t in_byteLen, uint8_t *out, uint64_t *out_byteLen)
 {
     int32_t ret = SUCCESS;
     int32_t parameter_flag = TRUE;
@@ -290,6 +295,7 @@ int32_t YBCrypto_BlockCipher_Update(CipherManager* CM, const uint8_t *in, uint64
 
         ret = FAIL_INVALID_MODULE_STATE;
         YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
+        YBCrypto_memset(CM, 0x00, sizeof(CipherManager));
         Destroy_YBCrypto();
         return ret;
     }
@@ -305,6 +311,7 @@ int32_t YBCrypto_BlockCipher_Update(CipherManager* CM, const uint8_t *in, uint64
 
         ret = FAIL_NOT_PERFORM_KATSELFTEST;
         YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
+        YBCrypto_memset(CM, 0x00, sizeof(CipherManager));
         Destroy_YBCrypto();
         return ret;
     }
@@ -386,7 +393,7 @@ EXIT:
     return ret;
 }
 
-int32_t YBCrypto_BlockCipher_Final(CipherManager* CM, uint8_t *out, uint32_t *pad_bytelen)
+int32_t __attribute__ ((visibility("default"))) YBCrypto_BlockCipher_Final(CipherManager* CM, uint8_t *out, uint32_t *pad_bytelen)
 {
     int32_t ret = SUCCESS;
     int32_t parameter_flag = TRUE;
@@ -403,6 +410,7 @@ int32_t YBCrypto_BlockCipher_Final(CipherManager* CM, uint8_t *out, uint32_t *pa
         fprintf(stdout, "=========================================\n\n");
 
         ret = FAIL_INVALID_MODULE_STATE;
+        YBCrypto_memset(CM, 0x00, sizeof(CipherManager));
         YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
         Destroy_YBCrypto();
         return ret;
@@ -418,6 +426,7 @@ int32_t YBCrypto_BlockCipher_Final(CipherManager* CM, uint8_t *out, uint32_t *pa
         fprintf(stdout, "=========================================\n\n");
 
         ret = FAIL_NOT_PERFORM_KATSELFTEST;
+        YBCrypto_memset(CM, 0x00, sizeof(CipherManager));
         YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
         Destroy_YBCrypto();
         return ret;
@@ -453,6 +462,7 @@ INIT:
     {
         YBCrypto_ChangeState(YBCrtypto_CM_NOMAL_NVM);
     }
+
     switch (CM->mode)
     {
     case ECB_MODE:
@@ -486,14 +496,16 @@ INIT:
 
 EXIT:
     if (ret != SUCCESS)
+    {
         fprintf(stdout, "=*Location : YBCrypto_BlockCipher_Final =\n");
+    }
     parameter_flag = 0x00;
     state = 0x00;
     YBCrypto_memset(CM, 0x00, sizeof(CipherManager));
     return ret;
 }
 
-int32_t YBCrypto_BlockCipher_Clear(CipherManager* CM)
+int32_t __attribute__ ((visibility("default"))) YBCrypto_BlockCipher_Clear(CipherManager* CM)
 {
     int32_t ret = SUCCESS;
     int32_t state = Inner_API_GetState();
@@ -510,6 +522,7 @@ int32_t YBCrypto_BlockCipher_Clear(CipherManager* CM)
 
         ret = FAIL_INVALID_MODULE_STATE;
         YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
+        YBCrypto_memset(CM, 0x00, sizeof(CipherManager));
         Destroy_YBCrypto();
         return ret;
     }
@@ -525,6 +538,7 @@ int32_t YBCrypto_BlockCipher_Clear(CipherManager* CM)
 
         ret = FAIL_NOT_PERFORM_KATSELFTEST;
         YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
+        YBCrypto_memset(CM, 0x00, sizeof(CipherManager));
         Destroy_YBCrypto();
         return ret;
     }

@@ -47,7 +47,7 @@ static inline void print_parameterErroR(uint32_t error_flag)
     }
 }
 
-int32_t YBCrypto_CTR_DRBG_Instantiate(
+int32_t __attribute__ ((visibility("default"))) YBCrypto_CTR_DRBG_Instantiate(
     DRBGManager *DM,
     uint32_t ALG, uint32_t key_bitlen,
     uint8_t *entropy_input, uint32_t entropy_bytelen,
@@ -72,6 +72,7 @@ int32_t YBCrypto_CTR_DRBG_Instantiate(
 
         ret = FAIL_INVALID_MODULE_STATE;
         YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
+        YBCrypto_memset(DM, 0x00, sizeof(DRBGManager));
         Destroy_YBCrypto();
         return ret;
     }
@@ -87,6 +88,7 @@ int32_t YBCrypto_CTR_DRBG_Instantiate(
 
         ret = FAIL_NOT_PERFORM_KATSELFTEST;
         YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
+        YBCrypto_memset(DM, 0x00, sizeof(DRBGManager));
         Destroy_YBCrypto();
         return ret;
     }
@@ -204,7 +206,7 @@ EXIT:
     return ret;
 }
 
-int32_t YBCrypto_CTR_DRBG_Reseed(
+int32_t __attribute__ ((visibility("default"))) YBCrypto_CTR_DRBG_Reseed(
     DRBGManager *DM,
     uint8_t *entropy_input, uint32_t entropy_bytelen,
     uint8_t *additional_input, uint32_t add_bytelen)
@@ -227,6 +229,7 @@ int32_t YBCrypto_CTR_DRBG_Reseed(
 
         ret = FAIL_INVALID_MODULE_STATE;
         YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
+        YBCrypto_memset(DM, 0x00, sizeof(DRBGManager));
         Destroy_YBCrypto();
         return ret;
     }
@@ -242,6 +245,7 @@ int32_t YBCrypto_CTR_DRBG_Reseed(
 
         ret = FAIL_NOT_PERFORM_KATSELFTEST;
         YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
+        YBCrypto_memset(DM, 0x00, sizeof(DRBGManager));
         Destroy_YBCrypto();
         return ret;
     }
@@ -331,7 +335,7 @@ EXIT:
     return ret;
 }
 
-int32_t YBCrypto_CTR_DRBG_Generate(
+int32_t __attribute__ ((visibility("default")))  YBCrypto_CTR_DRBG_Generate(
     DRBGManager *DM,
     uint8_t *output, uint64_t requested_num_of_bits,
     uint8_t *entropy_input, uint32_t entropy_bytelen,
@@ -355,6 +359,7 @@ int32_t YBCrypto_CTR_DRBG_Generate(
 
         ret = FAIL_INVALID_MODULE_STATE;
         YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
+        YBCrypto_memset(DM, 0x00, sizeof(DRBGManager));
         Destroy_YBCrypto();
         return ret;
     }
@@ -370,6 +375,7 @@ int32_t YBCrypto_CTR_DRBG_Generate(
 
         ret = FAIL_NOT_PERFORM_KATSELFTEST;
         YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
+        YBCrypto_memset(DM, 0x00, sizeof(DRBGManager));
         Destroy_YBCrypto();
         return ret;
     }
@@ -471,6 +477,77 @@ EXIT:
         Destroy_YBCrypto();
     }
 
+    return ret;
+}
+
+int32_t __attribute__ ((visibility("default"))) YBCrypto_CTR_DRBG_Uninstantiate(DRBGManager *DM)
+{
+    uint32_t ret = SUCCESS;
+    uint32_t parameter_flag = TRUE;
+    uint32_t error_flag = TRUE;
+    int32_t state = Inner_API_GetState();
+
+    //! check Module sate and Conditional Test
+    if ((state != YBCrtypto_CM_NOMAL_VM) && (state != YBCrtypto_CM_PRE_SELFTEST))
+    {
+        fprintf(stdout, "=========================================\n");
+        fprintf(stdout, "=     [YBCrypto V1.0 Not Nomal Mode]    =\n");
+        fprintf(stdout, "=*Location : CTR_DRBG_Generate          =\n");
+        fprintf(stdout, "=*Please reset Module(ReLoad)           =\n");
+        fprintf(stdout, "=*CM-> YBCrtypto_CM_CRITICAL_ERROR      =\n");
+        fprintf(stdout, "=========================================\n\n");
+
+        ret = FAIL_INVALID_MODULE_STATE;
+        YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
+        YBCrypto_memset(DM, 0x00, sizeof(DRBGManager));
+        Destroy_YBCrypto();
+        return ret;
+    }
+
+    if ((state != YBCrtypto_CM_PRE_SELFTEST) && (algTestedFlag.isDRBGTested != SUCCESS))
+    {
+        fprintf(stdout, "=========================================\n");
+        fprintf(stdout, "= [YBCrypto V1.0 Not Performed KATtest] =\n");
+        fprintf(stdout, "=*Location : CTR_DRBG_Generate          =\n");
+        fprintf(stdout, "=*Please reset Module(ReLoad)           =\n");
+        fprintf(stdout, "=*CM-> YBCrtypto_CM_CRITICAL_ERROR      =\n");
+        fprintf(stdout, "=========================================\n\n");
+
+        ret = FAIL_NOT_PERFORM_KATSELFTEST;
+        YBCrypto_ChangeState(YBCrtypto_CM_CRITICAL_ERROR);
+        YBCrypto_memset(DM, 0x00, sizeof(DRBGManager));
+        Destroy_YBCrypto();
+        return ret;
+    }
+
+     if (DM == NULL)
+    {
+        parameter_flag = FALSE;
+        error_flag = PARAMETER_ERROR;
+        goto INIT;
+    }
+
+INIT:
+
+    if (parameter_flag != TRUE)
+    {
+        YBCrypto_ChangeState(YBCrtypto_CM_NORMAL_ERROR);
+
+        fprintf(stdout, "=========================================\n");
+        fprintf(stdout, "=    [YBCrypto V1.0 Parameter ERROR]    =\n");
+        fprintf(stdout, "=*Location : CTR_DRBG_Uninstantiate     =\n");
+        print_parameterErroR(error_flag);
+        fprintf(stdout, "=*CM-> YBCrypto_CM_NOMAL_ERROR          =\n");
+        fprintf(stdout, "=*CM-> YBCrtypto_CM_NOMAL_VM            =\n");
+        fprintf(stdout, "=========================================\n\n");
+
+        YBCrypto_ChangeState(YBCrtypto_CM_NOMAL_VM);
+        YBCrypto_memset(DM, 0x00, sizeof(DRBGManager));
+        ret = FAIL_INVALID_INPUT_DATA;
+        return ret;
+    }
+
+    YBCrypto_memset(DM, 0x00, sizeof(DRBGManager));
     return ret;
 }
 // EOF

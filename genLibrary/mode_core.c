@@ -158,7 +158,6 @@ int32_t ECB_Final(CipherManager *c, uint8_t *out, uint32_t *pad_bytelen)
         *pad_bytelen = (c->pad_len);
     }
 
-    CiperManager_Clean(c);
     return ret;
 }
 
@@ -313,7 +312,6 @@ int32_t CBC_Final(CipherManager *c, uint8_t *out, uint32_t *pad_bytelen)
         c->encrypted_len += c->remained_len;
         *pad_bytelen = (c->pad_len);
     }
-    CiperManager_Clean(c);
     return ret;
 }
 
@@ -414,31 +412,23 @@ int32_t CTR_Final(CipherManager *c, uint8_t *out, uint32_t *pad_bytelen)
         memcpy(c->lastblock, c->buf, c->remained_len);
         count_increase(c->iv);
 
-        if (c->direct == ENCRYPT)
+        if (c->algo == AES)
         {
-            if (c->algo == AES)
-            {
-                AES_encrypt(c->iv, ciphertext, &(c->aes_key));
-            }
-            else if (c->algo == ARIA)
-            {
-                ARIA_Crypt(c->iv, c->aria_key.rounds, &(c->aria_key), ciphertext);
-            }
-            for (cnt_i = 0; cnt_i < BC_MAX_BLOCK_SIZE; cnt_i++)
-            {
-                out[c->encrypted_len + cnt_i] ^= c->lastblock[cnt_i];
-            }
+            AES_encrypt(c->iv, ciphertext, &(c->aes_key));
         }
-        else
+        else if (c->algo == ARIA)
         {
-            //! does not occur~
-            ret = FAIL_CORE;
+            ARIA_Crypt(c->iv, c->aria_key.rounds, &(c->aria_key), ciphertext);
         }
+        for (cnt_i = 0; cnt_i < BC_MAX_BLOCK_SIZE; cnt_i++)
+        {
+            out[c->encrypted_len + cnt_i] ^= c->lastblock[cnt_i];
+        }
+
         c->encrypted_len += BC_MAX_BLOCK_SIZE;
         *pad_bytelen = (c->pad_len);
     }
     YBCrypto_memset(ciphertext, 0x00, sizeof(ciphertext));
-    CiperManager_Clean(c);
     return ret;
 }
-//EOF
+// EOF

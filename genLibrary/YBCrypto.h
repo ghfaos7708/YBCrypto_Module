@@ -162,38 +162,38 @@ typedef struct YBCrypto_CTR_DRBG_manager_st
 } DRBGManager;
 
 //! constructor & destructor of YBCrypto Module (not API)
-void Load_YBCrypto(void);
-void Destroy_YBCrypto(void);
+void __attribute__((constructor)) Load_YBCrypto(void);
+void __attribute__((destructor)) Destroy_YBCrypto(void);
 
 //! YBCrypto Common API /////////////////////////////////////////////////////////////
-void YBCrypto_memset(void *pointer, int32_t value, int32_t size); //*done
-void YBCrypto_ModuleInfo(void);                                   //*done
-int32_t YBCrypto_GetState(void);                                  //*done
-int32_t YBCrypto_PreSelfTest(void);                               //todo integrity Test
+void __attribute__ ((visibility("default"))) YBCrypto_memset(void *pointer, int32_t value, int32_t size);
+void __attribute__ ((visibility("default"))) YBCrypto_ModuleInfo(void);                                   //*done
+int32_t __attribute__ ((visibility("default"))) YBCrypto_GetState(void);                                  //*done
+int32_t __attribute__ ((visibility("default"))) YBCrypto_PreSelfTest(void);                               //todo integrity Test
 
 //! YBCrypto BlockCipher API ////////////////////////////////////////////////////////
-int32_t YBCrypto_BlockCipher(CipherManager *CM, uint32_t ALG, int32_t MODE, int32_t direct, const uint8_t *user_key, uint32_t key_bitlen, const uint8_t *in, uint64_t in_byteLen, const uint8_t *iv, uint8_t *out);
-int32_t YBCrypto_BlockCipher_Init(CipherManager *CM, uint32_t ALG, int32_t MODE, int32_t direct, const uint8_t *user_key, uint32_t key_bitlen, const uint8_t *iv);
-int32_t YBCrypto_BlockCipher_Update(CipherManager *CM, const uint8_t *in, uint64_t in_byteLen, uint8_t *out, uint64_t *out_byteLen);
-int32_t YBCrypto_BlockCipher_Final(CipherManager *CM, uint8_t *out, uint32_t *pad_bytelen);
-int32_t YBCrypto_BlockCipher_Clear(CipherManager *CM);
+int32_t __attribute__ ((visibility("default"))) YBCrypto_BlockCipher(CipherManager *CM, uint32_t ALG, int32_t MODE, int32_t direct, const uint8_t *user_key, uint32_t key_bitlen, const uint8_t *in, uint64_t in_byteLen, const uint8_t *iv, uint8_t *out);
+int32_t __attribute__ ((visibility("default"))) YBCrypto_BlockCipher_Init(CipherManager *CM, uint32_t ALG, int32_t MODE, int32_t direct, const uint8_t *user_key, uint32_t key_bitlen, const uint8_t *iv);
+int32_t __attribute__ ((visibility("default"))) YBCrypto_BlockCipher_Update(CipherManager *CM, const uint8_t *in, uint64_t in_byteLen, uint8_t *out, uint64_t *out_byteLen);
+int32_t __attribute__ ((visibility("default"))) YBCrypto_BlockCipher_Final(CipherManager *CM, uint8_t *out, uint32_t *pad_bytelen);
+int32_t __attribute__ ((visibility("default"))) YBCrypto_BlockCipher_Clear(CipherManager *CM);
 
 //! YBCrypto HashFunction API ///////////////////////////////////////////////////////
-int32_t YBCrypto_Hash(HashManager *HM, uint32_t ALG, const uint8_t *msg, uint64_t msg_byteLen, uint8_t *md);
-int32_t YBCrypto_Hash_Init(HashManager *HM, uint32_t ALG);
-int32_t YBCrypto_Hash_Update(HashManager *HM, const uint8_t *msg, uint64_t msg_byteLen);
-int32_t YBCrypto_Hash_Final(HashManager *HM, uint8_t *md);
-int32_t YBCrypto_Hash_Clear(HashManager *HM);
+int32_t __attribute__ ((visibility("default"))) YBCrypto_Hash(HashManager *HM, uint32_t ALG, const uint8_t *msg, uint64_t msg_byteLen, uint8_t *md);
+int32_t __attribute__ ((visibility("default"))) YBCrypto_Hash_Init(HashManager *HM, uint32_t ALG);
+int32_t __attribute__ ((visibility("default"))) YBCrypto_Hash_Update(HashManager *HM, const uint8_t *msg, uint64_t msg_byteLen);
+int32_t __attribute__ ((visibility("default"))) YBCrypto_Hash_Final(HashManager *HM, uint8_t *md);
+int32_t __attribute__ ((visibility("default"))) YBCrypto_Hash_Clear(HashManager *HM);
 
 //! YBCrypto HMAC API ///////////////////////////////////////////////////////////////
-int32_t YBCrypto_HMAC(HMACManager *MM, uint32_t ALG, const uint8_t *key, uint32_t key_bytelen, const uint8_t *msg, uint64_t msg_byteLen, uint8_t *mac);
-int32_t YBCrypto_HMAC_Init(HMACManager *MM, uint32_t ALG, const uint8_t *key, uint32_t key_bytelen);
-int32_t YBCrypto_HMAC_Update(HMACManager *MM, const uint8_t *msg, uint64_t msg_byteLen);
-int32_t YBCrypto_HMAC_Final(HMACManager *MM, uint8_t *mac);
-int32_t YBCrypto_HMAC_Clear(HMACManager *MM);
+int32_t __attribute__ ((visibility("default"))) YBCrypto_HMAC(HMACManager *MM, uint32_t ALG, const uint8_t *key, uint32_t key_bytelen, const uint8_t *msg, uint64_t msg_byteLen, uint8_t *mac);
+int32_t __attribute__ ((visibility("default"))) YBCrypto_HMAC_Init(HMACManager *MM, uint32_t ALG, const uint8_t *key, uint32_t key_bytelen);
+int32_t __attribute__ ((visibility("default"))) YBCrypto_HMAC_Update(HMACManager *MM, const uint8_t *msg, uint64_t msg_byteLen);
+int32_t __attribute__ ((visibility("default"))) YBCrypto_HMAC_Final(HMACManager *MM, uint8_t *mac);
+int32_t __attribute__ ((visibility("default"))) YBCrypto_HMAC_Clear(HMACManager *MM);
 
 //! YBCrypto CTR_DRBG API ///////////////////////////////////////////////////////////////
-int32_t YBCrypto_CTR_DRBG_Instantiate(
+int32_t __attribute__ ((visibility("default"))) YBCrypto_CTR_DRBG_Instantiate(
     DRBGManager *DM,
     uint32_t ALG, uint32_t key_bitlen,
     uint8_t *entropy_input, uint32_t entropy_bytelen,
@@ -201,17 +201,18 @@ int32_t YBCrypto_CTR_DRBG_Instantiate(
     uint8_t *personalization_string, uint32_t string_bytelen,
     uint32_t derivation_function_flag);
 
-int32_t YBCrypto_CTR_DRBG_Reseed(
+int32_t __attribute__ ((visibility("default"))) YBCrypto_CTR_DRBG_Reseed(
     DRBGManager *DM,
     uint8_t *entropy_input, uint32_t entropy_bytelen,
     uint8_t *additional_input, uint32_t add_bytelen);
 
-int32_t YBCrypto_CTR_DRBG_Generate(
+int32_t __attribute__ ((visibility("default"))) YBCrypto_CTR_DRBG_Generate(
     DRBGManager *DM,
     uint8_t *output, uint64_t requested_num_of_bits,
     uint8_t *entropy_input, uint32_t entropy_bytelen,
     uint8_t *addtional_input, uint32_t add_bytelen,
     uint32_t prediction_resistance_flag);
 
+int32_t __attribute__ ((visibility("default"))) YBCrypto_CTR_DRBG_Uninstantiate(DRBGManager *DM);
 #endif
 //EOF
