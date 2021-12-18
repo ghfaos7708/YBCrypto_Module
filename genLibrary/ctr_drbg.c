@@ -110,7 +110,7 @@ int32_t __attribute__ ((visibility("default"))) YBCrypto_CTR_DRBG_Instantiate(
         goto INIT;
     }
 
-    if (nonce == NULL || (nonce_bytelen < (key_bitlen / 16)))
+    if (nonce != NULL && (nonce_bytelen < (key_bitlen / 16)))
     {
         parameter_flag = FALSE;
         error_flag = NONCE_LEN_SMALL;

@@ -57,7 +57,7 @@ int32_t __attribute__ ((visibility("default"))) YBCrypto_Hash(HashManager* HM, u
         parameter_flag = FALSE;
         goto INIT;
     }
-    if ((msg_byteLen == 0) || (msg_byteLen > HF_MAX_HASING_LEN))
+    if ((msg_byteLen < 0) || (msg_byteLen > HF_MAX_HASING_LEN))
     {
         parameter_flag = FALSE;
         goto INIT;
