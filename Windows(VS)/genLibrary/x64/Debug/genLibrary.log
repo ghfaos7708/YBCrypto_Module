@@ -1,0 +1,101 @@
+﻿  blockcipher_core.c
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\YBCrypto.h(20,1): warning C4005: 'TRUE': 매크로 재정의
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(75): message : 'TRUE'의 이전 정의를 참조하십시오.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\YBCrypto.h(21,1): warning C4005: 'FALSE': 매크로 재정의
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(71): message : 'FALSE'의 이전 정의를 참조하십시오.
+  ctrdrbg_core.c
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\ctrdrbg_core.c(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\YBCrypto.h(20,1): warning C4005: 'TRUE': 매크로 재정의
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(75): message : 'TRUE'의 이전 정의를 참조하십시오.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\YBCrypto.h(21,1): warning C4005: 'FALSE': 매크로 재정의
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(71): message : 'FALSE'의 이전 정의를 참조하십시오.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\ctrdrbg_core.c(66,52): warning C4244: '함수': 'uint64_t'에서 'int32_t'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\ctrdrbg_core.c(62,1): warning C4244: '초기화 중': 'uint64_t'에서 'int32_t'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\ctrdrbg_core.c(106,33): warning C4244: '=': 'uint64_t'에서 'int32_t'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\ctrdrbg_core.c(123,78): warning C4244: '=': 'uint64_t'에서 'int32_t'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\ctrdrbg_core.c(94,1): warning C4244: '초기화 중': 'uint64_t'에서 'int32_t'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\ctrdrbg_core.c(95,1): warning C4244: '초기화 중': 'uint64_t'에서 'int32_t'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\ctrdrbg_core.c(206,20): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\ctrdrbg_core.c(214,27): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\ctrdrbg_core.c(306,35): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\ctrdrbg_core.c(423,15): warning C4244: 'return': 'uint64_t'에서 'int32_t'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\ctrdrbg_core.c(445,98): warning C4244: '=': 'uint64_t'에서 'int32_t'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\ctrdrbg_core.c(507,20): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+  ctr_drbg.c
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\YBCrypto.h(20,1): warning C4005: 'TRUE': 매크로 재정의
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(75): message : 'TRUE'의 이전 정의를 참조하십시오.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\YBCrypto.h(21,1): warning C4005: 'FALSE': 매크로 재정의
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(71): message : 'FALSE'의 이전 정의를 참조하십시오.
+  dllmain.c
+  entropy.c
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\YBCrypto.h(20,1): warning C4005: 'TRUE': 매크로 재정의
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(75): message : 'TRUE'의 이전 정의를 참조하십시오.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\YBCrypto.h(21,1): warning C4005: 'FALSE': 매크로 재정의
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(71): message : 'FALSE'의 이전 정의를 참조하십시오.
+  hash.c
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\YBCrypto.h(20,1): warning C4005: 'TRUE': 매크로 재정의
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(75): message : 'TRUE'의 이전 정의를 참조하십시오.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\YBCrypto.h(21,1): warning C4005: 'FALSE': 매크로 재정의
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(71): message : 'FALSE'의 이전 정의를 참조하십시오.
+  hash_core.c
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\YBCrypto.h(20,1): warning C4005: 'TRUE': 매크로 재정의
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(75): message : 'TRUE'의 이전 정의를 참조하십시오.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\YBCrypto.h(21,1): warning C4005: 'FALSE': 매크로 재정의
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(71): message : 'FALSE'의 이전 정의를 참조하십시오.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\hash_core.c(95,62): warning C4244: '=': 'uint64_t'에서 'uint32_t'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\hash_core.c(128,56): warning C4244: '함수': 'uint64_t'에서 'int32_t'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\hash_core.c(167,30): warning C4244: '=': 'uint64_t'에서 'uint32_t'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\hash_core.c(168,30): warning C4244: '=': 'uint64_t'에서 'uint32_t'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\hash_core.c(169,30): warning C4244: '=': 'uint64_t'에서 'uint32_t'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\hash_core.c(170,30): warning C4244: '=': 'uint64_t'에서 'uint32_t'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\hash_core.c(171,30): warning C4244: '=': 'uint64_t'에서 'uint32_t'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\hash_core.c(172,30): warning C4244: '=': 'uint64_t'에서 'uint32_t'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\hash_core.c(173,30): warning C4244: '=': 'uint64_t'에서 'uint32_t'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\hash_core.c(174,30): warning C4244: '=': 'uint64_t'에서 'uint32_t'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\hash_core.c(420,52): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\hash_core.c(422,50): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\hash_core.c(512,51): warning C4244: '함수': 'uint64_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\hash_core.c(514,50): warning C4244: '함수': 'uint64_t'에서 'int32_t'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  hmac.c
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\YBCrypto.h(20,1): warning C4005: 'TRUE': 매크로 재정의
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(75): message : 'TRUE'의 이전 정의를 참조하십시오.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\YBCrypto.h(21,1): warning C4005: 'FALSE': 매크로 재정의
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(71): message : 'FALSE'의 이전 정의를 참조하십시오.
+  hmac_core.c
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\YBCrypto.h(20,1): warning C4005: 'TRUE': 매크로 재정의
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(75): message : 'TRUE'의 이전 정의를 참조하십시오.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\YBCrypto.h(21,1): warning C4005: 'FALSE': 매크로 재정의
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(71): message : 'FALSE'의 이전 정의를 참조하십시오.
+  integrity.c
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\YBCrypto.h(20,1): warning C4005: 'TRUE': 매크로 재정의
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(75): message : 'TRUE'의 이전 정의를 참조하십시오.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\YBCrypto.h(21,1): warning C4005: 'FALSE': 매크로 재정의
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(71): message : 'FALSE'의 이전 정의를 참조하십시오.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\integrity.c(52,50): warning C4267: '=': 'size_t'에서 'int32_t'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  KAT_test.c
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\YBCrypto.h(20,1): warning C4005: 'TRUE': 매크로 재정의
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(75): message : 'TRUE'의 이전 정의를 참조하십시오.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\YBCrypto.h(21,1): warning C4005: 'FALSE': 매크로 재정의
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(71): message : 'FALSE'의 이전 정의를 참조하십시오.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\KAT_test.c(14,16): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+  mode.c
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\YBCrypto.h(20,1): warning C4005: 'TRUE': 매크로 재정의
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(75): message : 'TRUE'의 이전 정의를 참조하십시오.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\YBCrypto.h(21,1): warning C4005: 'FALSE': 매크로 재정의
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(71): message : 'FALSE'의 이전 정의를 참조하십시오.
+  mode_core.c
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\YBCrypto.h(20,1): warning C4005: 'TRUE': 매크로 재정의
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(75): message : 'TRUE'의 이전 정의를 참조하십시오.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\YBCrypto.h(21,1): warning C4005: 'FALSE': 매크로 재정의
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(71): message : 'FALSE'의 이전 정의를 참조하십시오.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\mode_core.c(123,37): warning C4244: '=': 'uint64_t'에서 'uint32_t'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\mode_core.c(273,37): warning C4244: '=': 'uint64_t'에서 'uint32_t'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\mode_core.c(393,37): warning C4244: '=': 'uint64_t'에서 'uint32_t'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  YBCrypto.c
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\YBCrypto.h(20,1): warning C4005: 'TRUE': 매크로 재정의
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(75): message : 'TRUE'의 이전 정의를 참조하십시오.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\genLibrary\YBCrypto.h(21,1): warning C4005: 'FALSE': 매크로 재정의
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(71): message : 'FALSE'의 이전 정의를 참조하십시오.
+  코드를 생성하고 있습니다...
+     C:\Users\youngbeom\source\repos\YBCrypto_Module\x64\Debug\genLibrary.lib 라이브러리 및 C:\Users\youngbeom\source\repos\YBCrypto_Module\x64\Debug\genLibrary.exp 개체를 생성하고 있습니다.
+  genLibrary.vcxproj -> C:\Users\youngbeom\source\repos\YBCrypto_Module\x64\Debug\genLibrary.dll

@@ -1,0 +1,14 @@
+﻿  main.c
+C:\Users\youngbeom\source\repos\YBCrypto_Module\test_YBCrypto\YBCrypto.h(20,1): warning C4005: 'TRUE': 매크로 재정의
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(75): message : 'TRUE'의 이전 정의를 참조하십시오.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\test_YBCrypto\YBCrypto.h(21,1): warning C4005: 'FALSE': 매크로 재정의
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(71): message : 'FALSE'의 이전 정의를 참조하십시오.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\test_YBCrypto\main.c(57,59): warning C4244: '함수': 'uint64_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\test_YBCrypto\main.c(69,64): warning C4244: '함수': 'uint64_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\test_YBCrypto\main.c(75,56): warning C4244: '함수': 'uint64_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\test_YBCrypto\main.c(86,64): warning C4244: '함수': 'uint64_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\test_YBCrypto\main.c(91,56): warning C4244: '함수': 'uint64_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\test_YBCrypto\main.c(108,56): warning C4244: '함수': 'uint64_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\test_YBCrypto\main.c(38,8): warning C4101: 'recovertext' :참조되지 않은 지역 변수입니다.
+C:\Users\youngbeom\source\repos\YBCrypto_Module\test_YBCrypto\main.c(114,5): warning C4101: 'msg2' :참조되지 않은 지역 변수입니다.
+  test_YBCrypto.vcxproj -> C:\Users\youngbeom\source\repos\YBCrypto_Module\x64\Debug\test_YBCrypto.exe
